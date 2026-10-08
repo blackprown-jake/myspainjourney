@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Wanted Design System — Spacing, radius, elevation
+   Built on a 4px grid. Radius + elevation match the source file's rounding and
+   shadow tokens (alphas of 0.06–0.12 over near-black).
+   ========================================================================== */
+
+:root {
+  /* Spacing scale (4px grid) ---------------------------------------------- */
+  --space-0: 0;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+
+  /* Corner radius --------------------------------------------------------- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-full: 9999px;
+
+  /* Elevation — soft, low-contrast shadows over near-black ---------------- */
+  --elevation-sm: 0 1px 2px rgba(23, 23, 25, 0.06), 0 1px 3px rgba(23, 23, 25, 0.04);
+  --elevation-normal: 0 1px 4px rgba(23, 23, 25, 0.07), 0 2px 8px rgba(23, 23, 25, 0.06);
+  --elevation-strong: 0 2px 8px rgba(23, 23, 25, 0.10), 0 8px 24px rgba(23, 23, 25, 0.08);
+  --elevation-heavy: 0 4px 16px rgba(23, 23, 25, 0.12), 0 16px 48px rgba(23, 23, 25, 0.10);
+  --elevation-emphasize: 0 0 0 1px rgba(112, 115, 124, 0.08), 0 6px 12px rgba(23, 23, 25, 0.12), 0 16px 32px rgba(23, 23, 25, 0.10);
+
+  /* Motion ---------------------------------------------------------------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* @kind other */
+  --duration-fast: 120ms; /* @kind other */
+  --duration-normal: 200ms; /* @kind other */
+  --duration-slow: 320ms; /* @kind other */
+
+  /* Layout ---------------------------------------------------------------- */
+  --viewport-lg: 1100px;
+  --viewport-xl: 1440px;
+  --content-max: 1060px;
+}

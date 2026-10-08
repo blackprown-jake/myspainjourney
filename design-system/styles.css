@@ -1,0 +1,11 @@
+/* ==========================================================================
+   Wanted Design System — Global stylesheet entry point.
+   Consumers link THIS file. It is an @import manifest only — no rules live here.
+   Load order: raw Figma tokens → fonts → typography → spacing → semantic aliases.
+   ========================================================================== */
+
+@import "./tokens/fig-tokens.css";
+@import "./tokens/fonts.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/semantic.css";

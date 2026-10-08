@@ -1,0 +1,35 @@
+/* ==========================================================================
+   Wanted Design System — Webfonts
+   Brand typeface: Wanted Sans (open source, github.com/wanteddev/wanted-sans).
+   The source Figma renders most UI text in "Pretendard JP"; Wanted Sans is the
+   official brand typeface and is metrically compatible, so it is the primary
+   family here with Pretendard + system fonts as fallback.
+   Wanted Sans loads from jsDelivr CDN; Pretendard is self-hosted as a
+   single variable woff2 (assets/fonts/PretendardVariable.woff2).
+   ========================================================================== */
+
+@import url("https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.4/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css");
+
+/* Self-hosted Pretendard — one variable file covers weights 100–900 */
+@font-face {
+  font-family: "Pretendard Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/PretendardVariable.woff2") format("woff2-variations");
+}
+
+:root {
+  /* Primary brand sans — used for everything from display to caption */
+  --font-sans: "Wanted Sans Variable", "Wanted Sans", "Pretendard Variable",
+    Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Monospace — code, numeric tabular data */
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}

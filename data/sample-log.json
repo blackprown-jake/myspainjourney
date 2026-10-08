@@ -1,0 +1,26 @@
+{
+  "logs": [
+    {
+      "date": "2026-10-06",
+      "stage": 0,
+      "entries": [
+        {
+          "block": "vocab",
+          "task": "Anki 발음 덱(Learn to read Spanish)",
+          "minutes": null,
+          "note": "새 카드 10장"
+        },
+        {
+          "block": "structure",
+          "task": "Language Transfer Complete Spanish",
+          "minutes": null,
+          "note": "1~2강"
+        }
+      ],
+      "reflection": {
+        "learned": "모음 e(mesa), 이중모음 uo(cuota)",
+        "difficult": "첫날이라 Anki 사용법과 새 소리가 계속 어렵게 느껴짐"
+      }
+    }
+  ]
+}

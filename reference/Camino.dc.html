@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../design-system/tokens/fig-tokens.css">
+  <link rel="stylesheet" href="../design-system/tokens/fonts.css">
+  <link rel="stylesheet" href="../design-system/tokens/typography.css">
+  <link rel="stylesheet" href="../design-system/tokens/spacing.css">
+  <link rel="stylesheet" href="../design-system/tokens/semantic.css">
+  <link rel="stylesheet" href="../design-system/styles.css">
+  <script src="../design-system/_ds_bundle.js"></script>
+  <style>
+    html, body { margin: 0; }
+    a { color: var(--blue-50); text-decoration: none; }
+    a:hover { color: var(--blue-40); }
+    input[type=number] { -moz-appearance: textfield; }
+    input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
+</helmet>
+<div ref="{{ rootRef }}" style="height: {{ rootH }}; display: flex; overflow: hidden; background: var(--background-normal-alternative); font-family: var(--font-sans); color: var(--label-normal); -webkit-font-smoothing: antialiased; box-sizing: border-box;">
+
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <aside style="width: 232px; flex: none; display: flex; flex-direction: column; gap: 28px; padding: 28px 12px 20px; box-sizing: border-box; background: var(--background-normal-normal); border-right: 1px solid var(--line-normal-alternative);">
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 12px;">
+        <span style="font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: 700; color: var(--label-strong);">Camino</span>
+        <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); letter-spacing: var(--caption1-tracking); color: var(--label-alternative);">스페인어 학습 기록</span>
+      </div>
+      <nav style="display: flex; flex-direction: column; gap: 2px;">
+        <sc-for list="{{ sideNav }}" as="item" hint-placeholder-count="5">
+          <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ item.onClick }}" aria-current="page" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 12px; border: none; border-radius: 10px; background: var(--blue-95); color: var(--blue-50); font-family: inherit; font-size: var(--body2-size); font-weight: 700; cursor: pointer; text-align: left;">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="{{ item.icon }}" size="{{ 22 }}" hint-size="22px,22px"></x-import>
+              <span>{{ item.label }}</span>
+            </button>
+          </sc-if>
+          <sc-if value="{{ item.inactive }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ item.onClick }}" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 12px; border: none; border-radius: 10px; background: transparent; color: var(--label-neutral); font-family: inherit; font-size: var(--body2-size); font-weight: 500; cursor: pointer; text-align: left;" style-hover="background: var(--fill-alternative);" style-active="background: var(--fill-normal);">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="{{ item.icon }}" size="{{ 22 }}" hint-size="22px,22px"></x-import>
+              <span>{{ item.label }}</span>
+            </button>
+          </sc-if>
+        </sc-for>
+      </nav>
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 16px 12px 0; border-top: 1px solid var(--line-normal-alternative);">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+          <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-neutral);">{{ stageLabel }}</span>
+          <span style="font-size: var(--caption1-size); color: var(--label-alternative); font-variant-numeric: tabular-nums;">{{ cumLabel }}</span>
+        </div>
+        <div style="height: 6px; border-radius: 999px; background: var(--fill-normal); overflow: hidden;">
+          <div style="height: 100%; width: {{ cumPct }}; border-radius: 999px; background: var(--blue-50);"></div>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0;">
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <header style="height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 20px; background: var(--background-normal-normal); border-bottom: 1px solid var(--line-normal-alternative);">
+        <span style="font-size: var(--headline1-size); letter-spacing: var(--headline1-tracking); font-weight: 700; color: var(--label-strong);">Camino</span>
+        <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="setting" aria-label="설정" on-click="{{ openSettings }}" hint-size="40px,40px"></x-import>
+      </header>
+    </sc-if>
+
+    <div style="flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column;">
+      <main style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; container-type: inline-size;">
+
+        <sc-if value="{{ isTodayScreen }}" hint-placeholder-val="{{ true }}">
+          <div style="max-width: 1040px; margin: 0 auto; padding: clamp(20px, 4cqw, 40px) clamp(20px, 4cqw, 40px) 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+            <div style="flex: 999 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: var(--label1-size); line-height: var(--label1-line); font-weight: 600; color: var(--blue-50);">{{ stageLabel }}</span>
+                  <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">예시 데이터</x-import>
+                  </sc-if>
+                </div>
+                <h1 style="margin: 0; font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong);">{{ dateLabel }}</h1>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: var(--label1-size); line-height: var(--label1-line); font-weight: 600;">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; color: var(--green-30);">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="fire" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                    <span>{{ streakLabel }}</span>
+                  </span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; color: var(--label-neutral);">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="clock" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                    <span>오늘 {{ todayOfTarget }}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div>
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.SegmentedControl" items="{{ modeItems }}" value="{{ mode }}" on-change="{{ onMode }}" size="large" full-width="{{ isMobile }}" hint-size="290px,44px"></x-import>
+                </div>
+                <sc-if value="{{ hasModeDesc }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">{{ modeDesc }}</span>
+                </sc-if>
+              </div>
+
+              <sc-if value="{{ hasRhythm }}" hint-placeholder-val="{{ true }}">
+                <div style="display: flex; align-items: flex-start; gap: 8px; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral);">
+                  <span style="display: inline-flex; padding-top: 1px; color: var(--label-alternative);">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="calendar" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                  </span>
+                  <span style="text-wrap: pretty;"><span style="font-weight: 600; color: var(--label-normal);">{{ wdName }}</span> · {{ rhythmText }}</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="cautionary" title="{{ missingTitle }}" action="입력하기" on-action="{{ onFixMissing }}" hint-size="100%,72px">공부한 시간이 비어 있어요. 목표 시간을 채워 두었으니 확인만 해 주세요.</x-import>
+              </sc-if>
+
+              <sc-if value="{{ allDone }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="positive" title="오늘 할 일을 모두 마쳤어요" hint-size="100%,72px">{{ doneSummary }}</x-import>
+              </sc-if>
+
+              <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; border-radius: 12px; background: var(--background-normal-normal); border: 1px solid var(--line-normal-alternative); overflow: hidden;">
+                  <button onClick="{{ toggleTips }}" aria-expanded="{{ tipsOpen }}" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; border: none; background: transparent; text-align: left; cursor: pointer; font-family: inherit; font-size: var(--label1-size); color: var(--label-neutral);" style-active="background: var(--fill-alternative);">
+                    <span style="display: inline-flex; color: var(--blue-50);">
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="bulb" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                    </span>
+                    <span style="flex: none; font-weight: 600; color: var(--label-normal);">순서 안내</span>
+                    <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--label-alternative);">{{ tipPeek }}</span>
+                    <span style="display: inline-flex; color: var(--label-alternative);">
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="{{ tipsChevron }}" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                    </span>
+                  </button>
+                  <sc-if value="{{ tipsOpen }}" hint-placeholder-val="{{ false }}">
+                    <ol style="margin: 0; padding: 4px 14px 16px; list-style: none; display: flex; flex-direction: column; gap: 10px;">
+                      <sc-for list="{{ tips }}" as="t" hint-placeholder-count="4">
+                        <li style="display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--fill-normal); display: flex; align-items: center; justify-content: center; font-size: var(--caption1-size); font-weight: 600; color: var(--label-neutral);">{{ t.n }}</span>
+                          <span style="font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral); text-wrap: pretty;">{{ t.text }}</span>
+                        </li>
+                      </sc-for>
+                    </ol>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <sc-for list="{{ cards }}" as="card" hint-placeholder-count="3">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 20 }}" hint-size="100%,140px">
+                    <div style="display: flex; gap: 16px; align-items: flex-start;">
+                      <sc-if value="{{ card.unchecked }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ card.onToggle }}" role="checkbox" aria-checked="false" aria-label="{{ card.blockName }} 완료로 표시" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1.5px solid var(--line-normal-strong); background: var(--background-normal-normal); color: var(--label-disable); display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);" style-hover="background: var(--fill-alternative); color: var(--label-assistive);" style-active="background: var(--fill-strong);">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 24 }}" hint-size="24px,24px"></x-import>
+                        </button>
+                      </sc-if>
+                      <sc-if value="{{ card.checked }}" hint-placeholder-val="{{ false }}">
+                        <button onClick="{{ card.onToggle }}" role="checkbox" aria-checked="true" aria-label="{{ card.blockName }} 완료 취소" style="flex: none; width: 44px; height: 44px; border-radius: 12px; border: none; background: var(--accent-foreground-green); color: var(--static-white); display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: box-shadow var(--duration-fast) var(--ease-standard);" style-hover="box-shadow: inset 0 0 0 44px rgba(0,0,0,0.06);" style-active="box-shadow: inset 0 0 0 44px rgba(0,0,0,0.12);">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 26 }}" hint-size="26px,26px"></x-import>
+                        </button>
+                      </sc-if>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px; min-height: 22px;">
+                          <span style="width: 8px; height: 8px; border-radius: 999px; flex: none; background: {{ card.color }};"></span>
+                          <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">{{ card.blockName }}</span>
+                          <sc-if value="{{ card.extra }}" hint-placeholder-val="{{ false }}">
+                            <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">추가 기록</x-import>
+                          </sc-if>
+                          <span style="margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: var(--label1-size); font-weight: 600; color: var(--label-neutral);">
+                            <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="clock" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                            <span>{{ card.targetLabel }}</span>
+                          </span>
+                        </div>
+                        <sc-if value="{{ card.unchecked }}" hint-placeholder-val="{{ true }}">
+                          <span style="font-size: var(--headline1-size); line-height: var(--headline1-line); letter-spacing: var(--headline1-tracking); font-weight: 600; color: var(--label-strong); text-wrap: pretty;">{{ card.task }}</span>
+                        </sc-if>
+                        <sc-if value="{{ card.checked }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size: var(--headline1-size); line-height: var(--headline1-line); letter-spacing: var(--headline1-tracking); font-weight: 600; color: var(--label-alternative); text-wrap: pretty;">{{ card.task }}</span>
+                        </sc-if>
+                        <sc-if value="{{ card.hasResources }}" hint-placeholder-val="{{ true }}">
+                          <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <sc-for list="{{ card.resources }}" as="res" hint-placeholder-count="1">
+                              <div style="display: flex; flex-direction: column;">
+                                <button onClick="{{ res.onToggle }}" aria-expanded="{{ res.open }}" style="display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; border: none; background: transparent; text-align: left; cursor: pointer; font-family: inherit; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral);" style-hover="color: var(--label-strong);">
+                                  <span style="display: inline-flex; padding-top: 2px; color: var(--label-alternative);">
+                                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="document-text" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                                  </span>
+                                  <span style="flex: 1; min-width: 0; text-wrap: pretty;">{{ res.name }}</span>
+                                  <sc-if value="{{ res.hasInfo }}" hint-placeholder-val="{{ true }}">
+                                    <span style="display: inline-flex; padding-top: 2px; color: var(--label-alternative);">
+                                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="{{ res.chevron }}" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                                    </span>
+                                  </sc-if>
+                                </button>
+                                <sc-if value="{{ res.showInfo }}" hint-placeholder-val="{{ false }}">
+                                  <div style="margin: 4px 0 6px 22px; padding: 12px 14px; border-radius: 12px; background: var(--background-normal-alternative); display: flex; flex-direction: column; gap: 6px;">
+                                    <span style="font-size: var(--body2-size); line-height: var(--body2-reading-line); color: var(--label-normal); text-wrap: pretty;">{{ res.howTo }}</span>
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px;">
+                                      <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative);">{{ res.cost }}</span>
+                                      <sc-if value="{{ res.hasUrl }}" hint-placeholder-val="{{ true }}">
+                                        <a href="{{ res.url }}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--label2-size); font-weight: 600;">
+                                          <span>사이트 열기</span>
+                                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="external-link" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                                        </a>
+                                      </sc-if>
+                                    </div>
+                                  </div>
+                                </sc-if>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ card.showTip }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; align-items: flex-start; gap: 6px; font-size: var(--label2-size); line-height: var(--label2-line); font-weight: 600; color: var(--blue-50);">
+                            <span style="display: inline-flex; padding-top: 1px;">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="bulb" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                            </span>
+                            <span style="text-wrap: pretty;">{{ card.tip }}</span>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ card.showLogged }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;">
+                            <sc-if value="{{ card.needsMinutes }}" hint-placeholder-val="{{ false }}">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" tone="orange" hint-size="auto,24px">분 입력 필요</x-import>
+                            </sc-if>
+                            <sc-if value="{{ card.hasMinutes }}" hint-placeholder-val="{{ true }}">
+                              <span style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--label1-size); font-weight: 600; color: var(--green-30);">
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                                <span>{{ card.minutesLabel }} 기록</span>
+                              </span>
+                            </sc-if>
+                            <sc-if value="{{ card.hasNote }}" hint-placeholder-val="{{ false }}">
+                              <span style="font-size: var(--label1-size); color: var(--label-neutral);">{{ card.note }}</span>
+                            </sc-if>
+                            <div style="margin-left: auto;">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" color="assistive" size="small" icon-left="pencil" on-click="{{ card.onEdit }}" hint-size="auto,32px">고치기</x-import>
+                            </div>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ card.editing }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; background: var(--background-normal-alternative);">
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                              <div style="flex: 0 0 128px; min-width: 0;">
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="공부한 시간(분)" type="number" inputmode="numeric" size="medium" value="{{ card.draftMin }}" on-change="{{ card.onDraftMin }}" hint-size="128px,66px"></x-import>
+                              </div>
+                              <div style="flex: 1 1 200px; min-width: 0;">
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="한 줄 메모" size="medium" placeholder="예: LT 3~4강, 새 카드 10장" value="{{ card.draftNote }}" on-change="{{ card.onDraftNote }}" hint-size="100%,66px"></x-import>
+                              </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" color="assistive" size="small" on-click="{{ card.onSkip }}" hint-size="auto,32px">건너뛰기</x-import>
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" size="small" on-click="{{ card.onSave }}" hint-size="auto,32px">저장</x-import>
+                            </div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </div>
+                  </x-import>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ mShowRefl }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" variant="outlined" padding="{{ 20 }}" hint-size="100%,220px">
+                  <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="display: inline-flex; color: var(--accent-foreground-green);">
+                        <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="write" size="{{ 20 }}" hint-size="20px,20px"></x-import>
+                      </span>
+                      <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">오늘 배운 것</span>
+                      <span style="margin-left: auto; font-size: var(--caption1-size); color: var(--label-alternative);">자동 저장</span>
+                    </div>
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="배운 표현" size="medium" placeholder="예: 모음 e(mesa)" value="{{ learned }}" on-change="{{ onLearned }}" hint-size="100%,66px"></x-import>
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="어려웠던 점" size="medium" value="{{ difficult }}" on-change="{{ onDifficult }}" hint-size="100%,66px"></x-import>
+                  </div>
+                </x-import>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+              <div style="flex: 0 0 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" variant="outlined" padding="{{ 20 }}" hint-size="100%,260px">
+                  <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="display: inline-flex; color: var(--blue-50);">
+                        <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="bulb" size="{{ 20 }}" hint-size="20px,20px"></x-import>
+                      </span>
+                      <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">순서 안내</span>
+                    </div>
+                    <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                      <sc-for list="{{ tips }}" as="t" hint-placeholder-count="4">
+                        <li style="display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--fill-normal); display: flex; align-items: center; justify-content: center; font-size: var(--caption1-size); font-weight: 600; color: var(--label-neutral);">{{ t.n }}</span>
+                          <span style="font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral); text-wrap: pretty;">{{ t.text }}</span>
+                        </li>
+                      </sc-for>
+                    </ol>
+                  </div>
+                </x-import>
+                <sc-if value="{{ showReflection }}" hint-placeholder-val="{{ true }}">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" variant="outlined" padding="{{ 20 }}" hint-size="100%,220px">
+                    <div style="display: flex; flex-direction: column; gap: 14px;">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; color: var(--accent-foreground-green);">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="write" size="{{ 20 }}" hint-size="20px,20px"></x-import>
+                        </span>
+                        <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">오늘 배운 것</span>
+                        <span style="margin-left: auto; font-size: var(--caption1-size); color: var(--label-alternative);">자동 저장</span>
+                      </div>
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="배운 표현" size="medium" placeholder="예: 모음 e(mesa)" value="{{ learned }}" on-change="{{ onLearned }}" hint-size="100%,66px"></x-import>
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="어려웠던 점" size="medium" value="{{ difficult }}" on-change="{{ onDifficult }}" hint-size="100%,66px"></x-import>
+                    </div>
+                  </x-import>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isLogScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1040px; margin: 0 auto; padding: clamp(20px, 4cqw, 40px) clamp(20px, 4cqw, 40px) 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h1 style="margin: 0; font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong);">기록</h1>
+                  <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">예시 데이터</x-import>
+                  </sc-if>
+                </div>
+                <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">날짜를 누르면 그날 한 일을 보고 고칠 수 있어요.</p>
+              </div>
+              <div style="display: flex;">
+                <div style="display: flex; flex-direction: column; gap: 2px; padding-right: 24px;">
+                  <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">이번 주</span>
+                  <span style="font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: 700; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ weekLabel }}</span>
+                  <span style="font-size: var(--caption1-size); color: var(--label-alternative);">공부한 날 {{ weekDaysCount }}일</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 2px; padding-left: 24px; border-left: 1px solid var(--line-normal-normal);">
+                  <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">이번 달</span>
+                  <span style="font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: 700; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ monthLabel }}</span>
+                  <span style="font-size: var(--caption1-size); color: var(--label-alternative);">공부한 날 {{ monthDaysCount }}일</span>
+                </div>
+              </div>
+            </div>
+
+            <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="cautionary" title="{{ missingTitle }}" action="확인하기" on-action="{{ onFixMissing }}" hint-size="100%,72px">공부한 시간이 비어 있는 날을 차례로 열어 드릴게요.</x-import>
+            </sc-if>
+
+            <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,300px">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">학습 잔디</span>
+                    <span style="font-size: var(--label2-size); color: var(--label-alternative);">{{ gridRange }}</span>
+                    <div style="margin-left: auto; display: flex; gap: 4px;">
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-left" size="small" aria-label="이전 기간" disabled="{{ gridNoPrev }}" on-click="{{ onGridPrev }}" hint-size="32px,32px"></x-import>
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-right" size="small" aria-label="다음 기간" disabled="{{ gridNoNext }}" on-click="{{ onGridNext }}" hint-size="32px,32px"></x-import>
+                    </div>
+                  </div>
+                  <div style="overflow-x: auto; padding: 4px 2px;">
+                    <div style="display: inline-flex; gap: 8px;">
+                      <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 22px;">
+                        <sc-for list="{{ rowLabels }}" as="r" hint-placeholder-count="7">
+                          <span style="height: 20px; display: flex; align-items: center; font-size: var(--caption2-size); font-weight: 600; color: var(--label-alternative);">{{ r.label }}</span>
+                        </sc-for>
+                      </div>
+                      <div style="display: flex; gap: 4px;">
+                        <sc-for list="{{ grid }}" as="wk" hint-placeholder-count="32">
+                          <div style="display: flex; flex-direction: column; gap: 4px; width: 20px;">
+                            <span style="height: 18px; font-size: var(--caption2-size); font-weight: 600; color: var(--label-alternative); white-space: nowrap; overflow: visible;">{{ wk.label }}</span>
+                            <sc-for list="{{ wk.days }}" as="d" hint-placeholder-count="7">
+                              <button onClick="{{ d.onClick }}" disabled="{{ d.disabled }}" title="{{ d.title }}" aria-label="{{ d.title }}" style="width: 20px; height: 20px; padding: 0; border: none; border-radius: 5px; background: {{ d.bg }}; box-shadow: {{ d.ring }}; cursor: {{ d.cursor }};"></button>
+                            </sc-for>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;">
+                    <sc-for list="{{ heatLegend }}" as="h" hint-placeholder-count="5">
+                      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--caption1-size); color: var(--label-alternative);">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: {{ h.bg }};"></span>
+                        <span>{{ h.label }}</span>
+                      </span>
+                    </sc-for>
+                    <span style="margin-left: auto; font-size: var(--caption1-size); color: var(--label-alternative);">최소판 15분도 공부한 날로 칠해요</span>
+                  </div>
+                </div>
+              </x-import>
+            </sc-if>
+
+            <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 16 }}" hint-size="100%,420px">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-left" aria-label="이전 달" disabled="{{ calNoPrev }}" on-click="{{ onCalPrev }}" hint-size="40px,40px"></x-import>
+                    <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">{{ calTitle }}</span>
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-right" aria-label="다음 달" disabled="{{ calNoNext }}" on-click="{{ onCalNext }}" hint-size="40px,40px"></x-import>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+                    <sc-for list="{{ rowLabels }}" as="r" hint-placeholder-count="7">
+                      <span style="padding-bottom: 4px; text-align: center; font-size: var(--caption1-size); font-weight: 600; color: var(--label-alternative);">{{ r.label }}</span>
+                    </sc-for>
+                    <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="31">
+                      <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}">
+                        <span></span>
+                      </sc-if>
+                      <sc-if value="{{ c.filled }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ c.onClick }}" disabled="{{ c.disabled }}" aria-label="{{ c.title }}" style="aspect-ratio: 1; min-height: 44px; padding: 0; border: none; border-radius: 10px; background: {{ c.bg }}; box-shadow: {{ c.ring }}; color: {{ c.fg }}; font-family: inherit; font-size: var(--label1-size); font-weight: 600; cursor: {{ c.cursor }};">{{ c.num }}</button>
+                      </sc-if>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;">
+                    <sc-for list="{{ heatLegend }}" as="h" hint-placeholder-count="5">
+                      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--caption1-size); color: var(--label-alternative);">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: {{ h.bg }};"></span>
+                        <span>{{ h.label }}</span>
+                      </span>
+                    </sc-for>
+                  </div>
+                </div>
+              </x-import>
+            </sc-if>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+              <div style="flex: 999 1 420px; min-width: 0;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,360px">
+                  <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px;">
+                      <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">{{ detMeta }}</span>
+                        <h2 style="margin: 0; font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: 700; color: var(--label-strong);">{{ detTitle }}</h2>
+                      </div>
+                      <sc-if value="{{ detActive }}" hint-placeholder-val="{{ true }}">
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                          <span style="font-size: var(--heading2-size); line-height: var(--heading2-line); font-weight: 700; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ detTotal }}</span>
+                          <span style="font-size: var(--caption1-size); color: var(--label-alternative);">{{ detDone }}</span>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ detFuture }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin: 12px 0 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">아직 오지 않은 날이에요.</p>
+                    </sc-if>
+                    <sc-if value="{{ detBefore }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin: 12px 0 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">학습을 시작하기 전이에요.</p>
+                    </sc-if>
+                    <sc-if value="{{ detActive }}" hint-placeholder-val="{{ true }}">
+                      <div style="display: flex; flex-direction: column;">
+                        <sc-if value="{{ detNoEntries }}" hint-placeholder-val="{{ false }}">
+                          <p style="margin: 12px 0 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative); text-wrap: pretty;">기록이 없는 날이에요. 공부했다면 체크해서 남겨 두세요.</p>
+                        </sc-if>
+                        <div style="display: flex; flex-direction: column; margin-top: 12px;">
+                          <sc-for list="{{ detCards }}" as="card" hint-placeholder-count="3">
+                            <div style="display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-top: 1px solid var(--line-normal-alternative);">
+                              <sc-if value="{{ card.unchecked }}" hint-placeholder-val="{{ true }}">
+                                <button onClick="{{ card.onToggle }}" role="checkbox" aria-checked="false" aria-label="{{ card.blockName }} 완료로 표시" style="flex: none; width: 44px; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1.5px solid var(--line-normal-strong); background: var(--background-normal-normal); color: var(--label-disable); display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);" style-hover="background: var(--fill-alternative); color: var(--label-assistive);" style-active="background: var(--fill-strong);">
+                                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 24 }}" hint-size="24px,24px"></x-import>
+                                </button>
+                              </sc-if>
+                              <sc-if value="{{ card.checked }}" hint-placeholder-val="{{ false }}">
+                                <button onClick="{{ card.onToggle }}" role="checkbox" aria-checked="true" aria-label="{{ card.blockName }} 완료 취소" style="flex: none; width: 44px; height: 44px; border-radius: 12px; border: none; background: var(--accent-foreground-green); color: var(--static-white); display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: box-shadow var(--duration-fast) var(--ease-standard);" style-hover="box-shadow: inset 0 0 0 44px rgba(0,0,0,0.06);" style-active="box-shadow: inset 0 0 0 44px rgba(0,0,0,0.12);">
+                                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 26 }}" hint-size="26px,26px"></x-import>
+                                </button>
+                              </sc-if>
+                              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; align-items: center; gap: 8px; min-height: 20px;">
+                                  <span style="width: 8px; height: 8px; border-radius: 999px; flex: none; background: {{ card.color }};"></span>
+                                  <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">{{ card.blockName }}</span>
+                                  <sc-if value="{{ card.extra }}" hint-placeholder-val="{{ false }}">
+                                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">추가 기록</x-import>
+                                  </sc-if>
+                                  <span style="margin-left: auto; flex: none; font-size: var(--label2-size); color: var(--label-alternative);">목표 {{ card.targetLabel }}</span>
+                                </div>
+                                <sc-if value="{{ card.checked }}" hint-placeholder-val="{{ false }}">
+                                  <span style="font-size: var(--body1-size); line-height: var(--body1-line); font-weight: 600; color: var(--label-strong); text-wrap: pretty;">{{ card.loggedTask }}</span>
+                                </sc-if>
+                                <sc-if value="{{ card.unchecked }}" hint-placeholder-val="{{ true }}">
+                                  <span style="font-size: var(--body1-size); line-height: var(--body1-line); color: var(--label-alternative); text-wrap: pretty;">{{ card.task }}</span>
+                                </sc-if>
+                                <sc-if value="{{ card.showLogged }}" hint-placeholder-val="{{ false }}">
+                                  <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;">
+                                    <sc-if value="{{ card.needsMinutes }}" hint-placeholder-val="{{ false }}">
+                                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" tone="orange" hint-size="auto,24px">분 입력 필요</x-import>
+                                    </sc-if>
+                                    <sc-if value="{{ card.hasMinutes }}" hint-placeholder-val="{{ true }}">
+                                      <span style="font-size: var(--label1-size); font-weight: 600; color: var(--green-30);">{{ card.minutesLabel }}</span>
+                                    </sc-if>
+                                    <sc-if value="{{ card.hasNote }}" hint-placeholder-val="{{ false }}">
+                                      <span style="font-size: var(--label1-size); color: var(--label-neutral);">{{ card.note }}</span>
+                                    </sc-if>
+                                    <div style="margin-left: auto;">
+                                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" color="assistive" size="small" icon-left="pencil" on-click="{{ card.onEdit }}" hint-size="auto,32px">고치기</x-import>
+                                    </div>
+                                  </div>
+                                </sc-if>
+                                <sc-if value="{{ card.editing }}" hint-placeholder-val="{{ false }}">
+                                  <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; background: var(--background-normal-alternative);">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                      <div style="flex: 0 0 128px; min-width: 0;">
+                                        <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="공부한 시간(분)" type="number" inputmode="numeric" size="medium" value="{{ card.draftMin }}" on-change="{{ card.onDraftMin }}" hint-size="128px,66px"></x-import>
+                                      </div>
+                                      <div style="flex: 1 1 200px; min-width: 0;">
+                                        <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="한 줄 메모" size="medium" placeholder="예: LT 3~4강, 새 카드 10장" value="{{ card.draftNote }}" on-change="{{ card.onDraftNote }}" hint-size="100%,66px"></x-import>
+                                      </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" color="assistive" size="small" on-click="{{ card.onSkip }}" hint-size="auto,32px">닫기</x-import>
+                                      <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" size="small" on-click="{{ card.onSave }}" hint-size="auto,32px">저장</x-import>
+                                    </div>
+                                  </div>
+                                </sc-if>
+                              </div>
+                            </div>
+                          </sc-for>
+                        </div>
+                        <sc-if value="{{ detShowRefl }}" hint-placeholder-val="{{ true }}">
+                          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid var(--line-normal-alternative);">
+                            <div style="display: flex; align-items: center; gap: 8px; min-height: 32px;">
+                              <span style="display: inline-flex; color: var(--accent-foreground-green);">
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="write" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                              </span>
+                              <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">배운 것</span>
+                              <div style="margin-left: auto;">
+                                <sc-if value="{{ detReflView }}" hint-placeholder-val="{{ true }}">
+                                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" color="assistive" size="small" icon-left="pencil" on-click="{{ onEditRefl }}" hint-size="auto,32px">{{ reflEditLabel }}</x-import>
+                                </sc-if>
+                                <sc-if value="{{ detReflEdit }}" hint-placeholder-val="{{ false }}">
+                                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" size="small" on-click="{{ onDoneRefl }}" hint-size="auto,32px">완료</x-import>
+                                </sc-if>
+                              </div>
+                            </div>
+                            <sc-if value="{{ detReflView }}" hint-placeholder-val="{{ true }}">
+                              <div style="display: flex; flex-direction: column;">
+                                <sc-if value="{{ detHasRefl }}" hint-placeholder-val="{{ true }}">
+                                  <div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; align-items: baseline;">
+                                    <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">배운 표현</span>
+                                    <span style="font-size: var(--body2-size); line-height: var(--body2-reading-line); color: var(--label-normal); text-wrap: pretty;">{{ detLearnedText }}</span>
+                                    <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">어려웠던 점</span>
+                                    <span style="font-size: var(--body2-size); line-height: var(--body2-reading-line); color: var(--label-normal); text-wrap: pretty;">{{ detDifficultText }}</span>
+                                  </div>
+                                </sc-if>
+                                <sc-if value="{{ detNoRefl }}" hint-placeholder-val="{{ false }}">
+                                  <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">아직 남긴 내용이 없어요.</p>
+                                </sc-if>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ detReflEdit }}" hint-placeholder-val="{{ false }}">
+                              <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="배운 표현" size="medium" placeholder="예: 모음 e(mesa)" value="{{ detLearned }}" on-change="{{ onDetLearned }}" hint-size="100%,66px"></x-import>
+                                <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="어려웠던 점" size="medium" value="{{ detDifficult }}" on-change="{{ onDetDifficult }}" hint-size="100%,66px"></x-import>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </x-import>
+              </div>
+
+              <div style="flex: 1 1 300px; min-width: 0;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,300px">
+                  <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px;">
+                      <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">블록별 시간</span>
+                      <x-import component-from-global-scope="WantedDesignSystem_f12125.SegmentedControl" items="{{ ratioItems }}" value="{{ ratio }}" on-change="{{ onRatio }}" size="small" hint-size="200px,32px"></x-import>
+                    </div>
+                    <sc-if value="{{ hasRatio }}" hint-placeholder-val="{{ true }}">
+                      <div style="display: flex; flex-direction: column; gap: 14px;">
+                        <span style="font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: 700; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ ratioTotal }}</span>
+                        <div style="display: flex; gap: 3px; height: 12px; border-radius: 999px; overflow: hidden;">
+                          <sc-for list="{{ ratioSegs }}" as="g" hint-placeholder-count="4">
+                            <div style="flex: {{ g.flex }}; background: {{ g.color }};"></div>
+                          </sc-for>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                          <sc-for list="{{ ratioRows }}" as="r" hint-placeholder-count="4">
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line-normal-alternative);">
+                              <span style="width: 10px; height: 10px; border-radius: 999px; flex: none; background: {{ r.color }};"></span>
+                              <span style="flex: 1; min-width: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-normal); word-break: keep-all;">{{ r.name }}</span>
+                              <span style="font-size: var(--label1-size); font-weight: 600; color: var(--label-neutral); font-variant-numeric: tabular-nums;">{{ r.minLabel }}</span>
+                              <span style="width: 40px; text-align: right; font-size: var(--label2-size); color: var(--label-alternative); font-variant-numeric: tabular-nums;">{{ r.pct }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ noRatio }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative); text-wrap: pretty;">{{ ratioEmpty }}</p>
+                    </sc-if>
+                  </div>
+                </x-import>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isProgressScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1040px; margin: 0 auto; padding: clamp(20px, 4cqw, 40px) clamp(20px, 4cqw, 40px) 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 style="margin: 0; font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong);">진도</h1>
+                <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">예시 데이터</x-import>
+                </sc-if>
+              </div>
+              <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative); text-wrap: pretty;">{{ goalText }}</p>
+            </div>
+
+            <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="cautionary" title="{{ missingTitle }}" action="확인하기" on-action="{{ onFixMissing }}" hint-size="100%,72px">분이 비어 있는 기록은 누적 시간에 들어가지 않아요.</x-import>
+            </sc-if>
+
+            <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,300px">
+              <div style="display: flex; flex-wrap: wrap; gap: 28px 48px;">
+                <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: var(--label1-size); line-height: var(--label1-line); font-weight: 600; color: var(--blue-50);">지금 단계 · {{ curPeriod }}</span>
+                    <h2 style="margin: 0; font-size: var(--title3-size); line-height: var(--title3-line); letter-spacing: var(--title3-tracking); font-weight: 700; color: var(--label-strong);">{{ curTitle }}</h2>
+                    <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-reading-line); color: var(--label-neutral); text-wrap: pretty;">{{ curFocus }}</p>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative);">누적 공부 시간</span>
+                    <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px;">
+                      <span style="font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ cumHText }}</span>
+                      <span style="font-size: var(--body1-size); font-weight: 600; color: var(--label-alternative); font-variant-numeric: tabular-nums;">/ {{ curTargetText }}</span>
+                    </div>
+                    <div style="height: 10px; border-radius: 999px; background: var(--fill-normal); overflow: hidden;">
+                      <div style="height: 100%; width: {{ curPct }}; border-radius: 999px; background: var(--blue-50); transition: width var(--duration-normal) var(--ease-standard);"></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+                  <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">넘어가는 기준</span>
+                  <div style="display: flex; flex-direction: column;">
+                    <sc-for list="{{ gateItems }}" as="g" hint-placeholder-count="2">
+                      <button role="checkbox" aria-checked="{{ g.checked }}" onClick="{{ g.onToggle }}" style="display: flex; align-items: flex-start; gap: 12px; width: calc(100% + 16px); min-height: 48px; padding: 12px 8px; margin: 0 -8px; box-sizing: border-box; border: none; border-radius: 10px; background: transparent; font-family: inherit; text-align: left; cursor: pointer;" style-hover="background: var(--fill-alternative);" style-active="background: var(--fill-normal);">
+                        <x-import component-from-global-scope="WantedDesignSystem_f12125.Checkbox" checked="{{ g.checked }}" hint-size="22px,22px"></x-import>
+                        <span style="flex: 1; min-width: 0; font-size: var(--body1-size); line-height: var(--body1-line); color: var(--label-normal); text-wrap: pretty;">{{ g.text }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-normal-alternative);">
+                    <sc-if value="{{ hasNextStage }}" hint-placeholder-val="{{ true }}">
+                      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px;">
+                        <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" size="large" icon-right="arrow-right" disabled="{{ notReady }}" on-click="{{ onAdvance }}" hint-size="auto,48px">다음 단계로</x-import>
+                        <sc-if value="{{ isReady }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size: var(--label1-size); line-height: var(--label1-line); font-weight: 600; color: var(--green-30);">{{ readyNote }}</span>
+                        </sc-if>
+                        <sc-if value="{{ notReady }}" hint-placeholder-val="{{ true }}">
+                          <span style="font-size: var(--label1-size); line-height: var(--label1-line); color: var(--label-alternative);">{{ readyNote }}</span>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                    <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative); text-wrap: pretty;">{{ principle }}</span>
+                  </div>
+                </div>
+              </div>
+            </x-import>
+
+            <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,560px">
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; padding-bottom: 20px;">
+                  <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">전체 로드맵</span>
+                  <span style="font-size: var(--label2-size); color: var(--label-alternative); font-variant-numeric: tabular-nums;">{{ roadmapMeta }}</span>
+                </div>
+                <sc-for list="{{ stageRows }}" as="r" hint-placeholder-count="5">
+                  <div style="display: flex; gap: 16px;">
+                    <div style="flex: none; width: 32px; display: flex; flex-direction: column; align-items: center;">
+                      <sc-if value="{{ r.done }}" hint-placeholder-val="{{ false }}">
+                        <span style="flex: none; width: 32px; height: 32px; border-radius: 999px; background: var(--accent-foreground-green); color: var(--static-white); display: flex; align-items: center; justify-content: center;">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="check" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ r.current }}" hint-placeholder-val="{{ false }}">
+                        <span style="flex: none; width: 32px; height: 32px; border-radius: 999px; background: var(--blue-50); color: var(--static-white); display: flex; align-items: center; justify-content: center; font-size: var(--label1-size); font-weight: 700;">{{ r.id }}</span>
+                      </sc-if>
+                      <sc-if value="{{ r.future }}" hint-placeholder-val="{{ true }}">
+                        <span style="flex: none; width: 32px; height: 32px; box-sizing: border-box; border-radius: 999px; border: 1.5px solid var(--line-normal-normal); background: var(--background-normal-normal); color: var(--label-alternative); display: flex; align-items: center; justify-content: center; font-size: var(--label1-size); font-weight: 600;">{{ r.id }}</span>
+                      </sc-if>
+                      <sc-if value="{{ r.hasLine }}" hint-placeholder-val="{{ true }}">
+                        <span style="flex: 1; width: 2px; min-height: 12px; margin: 6px 0; border-radius: 999px; background: {{ r.lineColor }};"></span>
+                      </sc-if>
+                    </div>
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding-top: 4px;">
+                      <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 10px;">
+                        <span style="font-size: var(--body1-size); line-height: var(--body1-line); font-weight: 700; color: {{ r.titleColor }};">{{ r.title }}</span>
+                        <span style="font-size: var(--label2-size); color: var(--label-alternative);">{{ r.meta }}</span>
+                        <sc-if value="{{ r.hasState }}" hint-placeholder-val="{{ false }}">
+                          <span style="margin-left: auto; font-size: var(--label2-size); font-weight: 600; color: {{ r.stateColor }};">{{ r.stateText }}</span>
+                        </sc-if>
+                      </div>
+                      <span style="font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral); text-wrap: pretty;">{{ r.focus }}</span>
+                      <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">넘어가는 기준 · {{ r.gate }}</span>
+                      <sc-if value="{{ r.hasExam }}" hint-placeholder-val="{{ false }}">
+                        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; padding-top: 2px;">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" tone="primary" hint-size="auto,24px">{{ r.examName }}</x-import>
+                          <span style="font-size: var(--label2-size); line-height: var(--label2-line); font-weight: 600; color: var(--label-neutral);">{{ r.examTarget }}</span>
+                          <sc-if value="{{ r.hasExamNote }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">{{ r.examNote }}</span>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.hasLine }}" hint-placeholder-val="{{ true }}">
+                        <span style="flex: none; height: 20px;"></span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </x-import>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isReviewScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1040px; margin: 0 auto; padding: clamp(20px, 4cqw, 40px) clamp(20px, 4cqw, 40px) 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h1 style="margin: 0; font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong);">월간 점검</h1>
+                  <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">예시 데이터</x-import>
+                  </sc-if>
+                </div>
+                <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative); text-wrap: pretty;">한 달에 한 번, 이번 달을 돌아보고 계획을 조정해요.</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-left" aria-label="이전 달" disabled="{{ revNoPrev }}" on-click="{{ onRevPrev }}" hint-size="40px,40px"></x-import>
+                <span style="min-width: 112px; text-align: center; font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong); font-variant-numeric: tabular-nums;">{{ revTitle }}</span>
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.IconButton" icon="chevron-right" aria-label="다음 달" disabled="{{ revNoNext }}" on-click="{{ onRevNext }}" hint-size="40px,40px"></x-import>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+              <div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,320px">
+                  <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 8px;">
+                      <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">월말 체크리스트</span>
+                      <span style="font-size: var(--label2-size); font-weight: 600; color: var(--label-alternative); font-variant-numeric: tabular-nums;">{{ revDoneLabel }}</span>
+                    </div>
+                    <sc-for list="{{ revChecks }}" as="c" hint-placeholder-count="4">
+                      <div style="display: flex; flex-direction: column; border-top: 1px solid var(--line-normal-alternative);">
+                        <button role="checkbox" aria-checked="{{ c.checked }}" onClick="{{ c.onToggle }}" style="display: flex; align-items: flex-start; gap: 12px; width: calc(100% + 16px); min-height: 52px; padding: 14px 8px; margin: 0 -8px; box-sizing: border-box; border: none; border-radius: 10px; background: transparent; font-family: inherit; text-align: left; cursor: pointer;" style-hover="background: var(--fill-alternative);" style-active="background: var(--fill-normal);">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Checkbox" checked="{{ c.checked }}" hint-size="22px,22px"></x-import>
+                          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: var(--body1-size); line-height: var(--body1-line); color: var(--label-normal); text-wrap: pretty;">{{ c.text }}</span>
+                            <sc-if value="{{ c.hasDetail }}" hint-placeholder-val="{{ false }}">
+                              <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">{{ c.detail }}</span>
+                            </sc-if>
+                          </span>
+                        </button>
+                        <sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}">
+                          <div style="padding: 0 0 12px 26px;">
+                            <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="text" size="small" icon-right="chevron-right" on-click="{{ c.onLink }}" hint-size="auto,32px">진도에서 확인</x-import>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </x-import>
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,200px">
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">이번 달 메모</span>
+                    <textarea value="{{ revMemo }}" onChange="{{ onRevMemo }}" rows="4" aria-label="이번 달 메모" placeholder="예: 지난달보다 영상이 잘 들림, 녹음에서 r 발음이 어색함" style="width: 100%; min-height: 112px; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--wt-border-solid); background: var(--wt-static-white); font-family: var(--font-sans); font-size: 15px; line-height: 1.5; color: var(--wt-text); resize: vertical; outline: none; transition: border-color var(--duration-fast) var(--ease-standard);" style-focus="border-color: var(--wt-primary);"></textarea>
+                    <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative);">자동 저장 · 달마다 따로 남아요</span>
+                  </div>
+                </x-import>
+              </div>
+
+              <div style="flex: 1 1 300px; min-width: 0;">
+                <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,400px">
+                  <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px;">
+                      <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">계획 조정</span>
+                      <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">해당하는 신호를 고르면 조정 방법을 알려 드려요.</span>
+                    </div>
+                    <sc-for list="{{ revRules }}" as="r" hint-placeholder-count="5">
+                      <div style="display: flex; flex-direction: column; border-top: 1px solid var(--line-normal-alternative);">
+                        <button role="checkbox" aria-checked="{{ r.checked }}" onClick="{{ r.onToggle }}" style="display: flex; align-items: flex-start; gap: 12px; width: calc(100% + 16px); min-height: 52px; padding: 14px 8px; margin: 0 -8px; box-sizing: border-box; border: none; border-radius: 10px; background: transparent; font-family: inherit; text-align: left; cursor: pointer;" style-hover="background: var(--fill-alternative);" style-active="background: var(--fill-normal);">
+                          <x-import component-from-global-scope="WantedDesignSystem_f12125.Checkbox" checked="{{ r.checked }}" hint-size="22px,22px"></x-import>
+                          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+                            <span style="font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-normal); text-wrap: pretty;">{{ r.signal }}</span>
+                            <sc-if value="{{ r.detected }}" hint-placeholder-val="{{ false }}">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" tone="orange" size="small" hint-size="auto,20px">최근 2주 기록에서 감지</x-import>
+                            </sc-if>
+                          </span>
+                        </button>
+                        <sc-if value="{{ r.checked }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; align-items: flex-start; gap: 8px; margin: 0 0 14px 34px; padding: 12px 14px; border-radius: 12px; background: var(--blue-95);">
+                            <span style="display: inline-flex; padding-top: 2px; color: var(--blue-50);">
+                              <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="arrow-right" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+                            </span>
+                            <span style="font-size: var(--body2-size); line-height: var(--body2-line); font-weight: 600; color: var(--label-normal); text-wrap: pretty;">{{ r.adjustment }}</span>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </x-import>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSettingsScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 720px; margin: 0 auto; padding: clamp(20px, 4cqw, 40px) clamp(20px, 4cqw, 40px) 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 style="margin: 0; font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: 700; color: var(--label-strong);">설정</h1>
+                <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Tag" size="small" hint-size="auto,20px">예시 데이터</x-import>
+                </sc-if>
+              </div>
+              <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">학습 계획과 기록 데이터를 관리해요.</p>
+            </div>
+
+            <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="info" title="예시 데이터를 보고 있어요" hint-size="100%,72px">여기서 바꾼 내용은 저장되지 않아요.</x-import>
+            </sc-if>
+            <sc-if value="{{ hasImportMsg }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Alert" tone="{{ importTone }}" title="{{ importTitle }}" hint-size="100%,72px">{{ importText }}</x-import>
+            </sc-if>
+
+            <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,260px">
+              <div style="display: flex; flex-direction: column; gap: 22px;">
+                <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">학습 계획</span>
+                <div style="display: flex; flex-direction: column; gap: 6px; max-width: 240px;">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.TextField" label="학습 시작일" type="date" size="medium" value="{{ startDate }}" on-change="{{ onStartDate }}" hint-size="100%,66px"></x-import>
+                  <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative);">기록 화면의 잔디가 이 날짜부터 시작해요.</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <span style="font-size: 14px; font-weight: 600; color: var(--wt-text);">기본 모드</span>
+                  <div>
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.SegmentedControl" items="{{ modeItems }}" value="{{ defaultMode }}" on-change="{{ onDefaultMode }}" full-width="{{ isMobile }}" hint-size="290px,40px"></x-import>
+                  </div>
+                  <span style="font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative);">새 날을 열 때 이 모드로 시작해요. 오늘 화면에서 고른 모드는 그날만 적용돼요.</span>
+                </div>
+              </div>
+            </x-import>
+
+            <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,360px">
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px;">
+                  <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">현재 단계</span>
+                  <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative); text-wrap: pretty;">보통은 진도 화면에서 기준을 채우고 넘어가요. 잘못 넘어갔거나 이미 알고 있는 단계가 있을 때 여기서 바꿔요.</span>
+                </div>
+                <sc-for list="{{ stageOptions }}" as="o" hint-placeholder-count="5">
+                  <button role="radio" aria-checked="{{ o.checked }}" onClick="{{ o.onPick }}" style="display: flex; align-items: center; gap: 12px; width: calc(100% + 16px); min-height: 56px; padding: 10px 8px; margin: 0 -8px; box-sizing: border-box; border: none; border-radius: 10px; background: transparent; font-family: inherit; text-align: left; cursor: pointer;" style-hover="background: var(--fill-alternative);" style-active="background: var(--fill-normal);">
+                    <x-import component-from-global-scope="WantedDesignSystem_f12125.Radio" checked="{{ o.checked }}" hint-size="22px,22px"></x-import>
+                    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                      <span style="font-size: var(--body1-size); line-height: var(--body1-line); font-weight: 600; color: var(--label-normal);">{{ o.title }}</span>
+                      <span style="font-size: var(--label2-size); line-height: var(--label2-line); color: var(--label-alternative);">{{ o.meta }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+            </x-import>
+
+            <x-import component-from-global-scope="WantedDesignSystem_f12125.Card" padding="{{ 24 }}" hint-size="100%,240px">
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="font-size: var(--headline2-size); line-height: var(--headline2-line); font-weight: 600; color: var(--label-strong);">데이터</span>
+                  <span style="font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-neutral); font-variant-numeric: tabular-nums;">{{ dataSummary }}</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="outlined" color="assistive" icon-left="download" on-click="{{ onExport }}" hint-size="auto,40px">내보내기</x-import>
+                  <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="outlined" color="assistive" icon-left="upload" on-click="{{ onPickFile }}" hint-size="auto,40px">가져오기</x-import>
+                  <input ref="{{ fileRef }}" type="file" accept=".json,application/json" onChange="{{ onImportFile }}" aria-hidden="true" tabIndex="-1" style="display: none;">
+                </div>
+                <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: var(--caption1-size); line-height: var(--caption1-line); color: var(--label-alternative);">
+                  <li style="text-wrap: pretty;">기록은 이 브라우저에만 저장돼요. 기기를 바꾸거나 브라우저 데이터를 지우기 전에 내보내 두세요.</li>
+                  <li style="text-wrap: pretty;">내보낸 파일을 가져오면 전체가 그 파일로 바뀌어요.</li>
+                  <li style="text-wrap: pretty;">sample-log.json처럼 logs만 있는 파일은 기존 기록에 합쳐지고, 같은 날짜는 가져온 기록으로 바뀌어요.</li>
+                </ul>
+              </div>
+            </x-import>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isOtherScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 520px; margin: 0 auto; padding: 96px 24px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <span style="display: inline-flex; color: var(--label-assistive);">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Icon" name="{{ screenIcon }}" size="{{ 40 }}" hint-size="40px,40px"></x-import>
+            </span>
+            <h2 style="margin: 0; font-size: var(--heading2-size); line-height: var(--heading2-line); font-weight: 700; color: var(--label-strong);">{{ screenTitle }}</h2>
+            <p style="margin: 0; font-size: var(--body2-size); line-height: var(--body2-line); color: var(--label-alternative);">진도 화면을 확인받은 뒤 이어서 만들어요.</p>
+            <div style="padding-top: 8px;">
+              <x-import component-from-global-scope="WantedDesignSystem_f12125.Button" variant="outlined" color="assistive" on-click="{{ goToday }}" hint-size="auto,40px">오늘로 돌아가기</x-import>
+            </div>
+          </div>
+        </sc-if>
+      </main>
+
+      <sc-if value="{{ hasUndo }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 18px; border-radius: 12px; background: var(--inverse-background); color: var(--inverse-label); box-shadow: var(--elevation-strong); font-size: var(--body2-size); white-space: nowrap;">
+          <span>{{ undoText }}</span>
+          <button onClick="{{ onUndo }}" style="border: none; background: transparent; color: var(--inverse-primary); font-family: inherit; font-size: var(--label1-size); font-weight: 700; cursor: pointer; padding: 8px 10px; border-radius: 8px;" style-hover="background: rgba(255,255,255,0.08);">되돌리기</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="WantedDesignSystem_f12125.BottomNavigation" items="{{ navItems }}" value="{{ screen }}" on-change="{{ onNav }}" hint-size="100%,58px"></x-import>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;layout&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;auto&quot;, &quot;desktop&quot;, &quot;mobile&quot;], &quot;default&quot;: &quot;auto&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;미리보기&quot;}, &quot;initialScreen&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;today&quot;, &quot;log&quot;, &quot;progress&quot;, &quot;review&quot;, &quot;settings&quot;], &quot;default&quot;: &quot;today&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;미리보기&quot;}, &quot;scenario&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;실제 기록&quot;, &quot;예시 · 1단계 수요일&quot;, &quot;예시 · 1단계 일요일&quot;, &quot;예시 · 2단계 월요일&quot;, &quot;예시 · 2단계 토요일&quot;], &quot;default&quot;: &quot;실제 기록&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;미리보기&quot;}}">
+class Component extends DCLogic {
+  static PLAN = {
+    meta: { title: "Jake의 스페인어 로드맵 — 스페인 북부 이민", goal: "약 2년 안에 B2 도달, 스페인 북부에서 생활·행정·업무 처리", accent: "스페인 본토식(vosotros 사용, z와 ce·ci를 θ로 발음)", dailyTime: "책상 앞 하루 1~2시간, 평균 1.5시간", learnerNotes: "스페인어 완전 초보, 영어 상급(설명과 번역은 영어로 받는 게 유리)", startDate: "2026-10-06", principle: "다음 단계로 넘어갈지는 날짜가 아니라 넘어가는 기준을 채웠는지로 정함" },
+    blocks: [{ id: "vocab", name: "단어" }, { id: "input", name: "대량 입력" }, { id: "structure", name: "구조 또는 집중 듣기" }, { id: "output", name: "말하기·쓰기" }],
+    modes: [
+      { id: "min", name: "최소판", totalMinutes: 15, description: "Anki 복습 + 쉬운 영상 1개. 기록이 끊기지 않게 하는 게 목적", blockMinutes: { vocab: 8, input: 7, structure: 0, output: 0 } },
+      { id: "1h", name: "1시간판", totalMinutes: 60, description: "평일 기본", blockMinutes: { vocab: 15, input: 30, structure: 15, output: 0 } },
+      { id: "2h", name: "2시간판", totalMinutes: 120, description: "여유 있는 날", blockMinutes: { vocab: 20, input: 60, structure: 25, output: 15 } }
+    ],
+    stages: [
+      { id: 0, name: "준비", period: "1~2주", cumulativeHoursTarget: 15, focus: "발음·강세 규칙, 도구 설치, Language Transfer 시작", tasks: {
+        vocab: { task: "Anki 새 카드 10장(발음 덱 → 기초 50단어)", resources: ["Learn to read Spanish 🇪🇸 - The Spanish writing system", "Spanish Frequency Core Vocabulary 1–50"] },
+        input: { task: "초보 영상 보기. 그림과 몸짓으로 대충 따라가기만 해도 충분", resources: ["Dreaming Spanish Superbeginner(억양 필터: 스페인)"] },
+        structure: { task: "Language Transfer 1~2강. 문제가 나오면 멈추고 소리 내서 답하기", resources: ["Language Transfer Complete Spanish"] },
+        output: { task: "발음 덱 예시 단어를 듣고 소리 내 따라 말하기", resources: ["Learn to read Spanish 🇪🇸 - The Spanish writing system"] } }, gate: "처음 보는 단어를 강세까지 맞게 소리 내 읽을 수 있음" },
+      { id: 1, name: "기초", period: "1~3개월", cumulativeHoursTarget: 135, focus: "Language Transfer 완주, 초보 영상, 고빈도 단어 1,000개", tasks: {
+        vocab: { task: "Anki 복습 + 새 카드 10~15장", resources: ["Basic European Spanish Sentences", "Spanish Top 5000 Vocabulary(처음 1,000단어)"] },
+        input: { task: "초보 영상, 스페인 출신 가이드 위주", resources: ["Dreaming Spanish Superbeginner → Beginner"] },
+        structure: { task: "Language Transfer 1강(약 90강 완주 목표)", resources: ["Language Transfer Complete Spanish"] },
+        output: { task: "초보 영상 문장 5~10분 듣고 따라 말하기", resources: ["Dreaming Spanish"] } }, gate: "Dreaming Spanish Beginner 영상을 자막 없이 대부분 따라감" },
+      { id: 2, name: "이해 확장", period: "4~8개월", cumulativeHoursTarget: 360, focus: "중급 입력, 집중 듣기 시작, 문장 채굴, 튜터 시작", tasks: {
+        vocab: { task: "Anki 복습 + 문장 채굴(모르는 단어가 1~2개인 문장 저장)", resources: ["Anki", "Language Reactor"] },
+        input: { task: "중급 영상·학습자용 팟캐스트·쉬운 읽기책", resources: ["Dreaming Spanish Intermediate", "Hoy Hablamos Básico", "등급별 읽기책"] },
+        structure: { task: "구조 학습(요일 규칙에 따라 집중 듣기로 바뀜)", resources: ["AI 챗봇(스크립트 구문 분석, 설명은 영어로)"] },
+        output: { task: "짧은 일기 쓰기(주 3회), 튜터나 AI로 첨삭", resources: ["튜터(italki, Preply 등)", "AI 챗봇"] } }, gate: "DELE A2 모의고사 합격선 · 학습자용 팟캐스트 대부분 이해" },
+      { id: 3, name: "실제 콘텐츠", period: "9~15개월", cumulativeHoursTarget: 675, focus: "요리·여행·영화 원어민 콘텐츠, 현지 브이로그 집중 듣기, 튜터 주 2회", tasks: {
+        vocab: { task: "Anki 복습 + 문장 채굴", resources: ["Anki", "Language Reactor"] },
+        input: { task: "요리·여행·영화 원어민 콘텐츠, 일반 학습자용 팟캐스트", resources: ["Cocina abierta de Karlos Arguiñano", "Un país para comérselo", "스페인 영화·드라마(스페인어 자막)", "Hoy Hablamos", "Unlimited Spanish"] },
+        structure: { task: "현지인 브이로그 도입부 1~2분 집중 듣기", resources: ["스페인 북부 여행 브이로그"] },
+        output: { task: "튜터 수업(주 2회), 주제를 정해 토론", resources: ["튜터(italki, Preply 등)"] } }, gate: "DELE B1 모의고사 합격선 · 스페인어 자막으로 영화 줄거리를 따라감" },
+      { id: 4, name: "이민 준비", period: "16~24개월", cumulativeHoursTarget: 1080, focus: "생활·행정 스페인어, 뉴스·라디오, 역할극", tasks: {
+        vocab: { task: "Anki 복습 + 생활·행정 어휘(거주 등록, 집 계약, 은행, 병원, 일)", resources: ["Anki"] },
+        input: { task: "스페인 뉴스·라디오, 정착할 지역 방송", resources: ["스페인 뉴스·라디오"] },
+        structure: { task: "생활·행정 상황 표현 집중 학습", resources: ["AI 챗봇"] },
+        output: { task: "튜터와 역할극: 관공서, 집 계약, 병원, 은행, 전화 통화", resources: ["튜터(italki, Preply 등)"] } }, gate: "자막 없이 일상 대화와 전화 처리 · DELE B2 응시" }
+    ],
+    weeklyRhythm: [
+      { days: ["월", "수", "금"], activity: "집중 듣기 세션: 1~2분 구간 받아쓰기 → 스크립트 비교 → 따라 말하기", replacesBlock: "structure", fromStage: 2, noteBeforeStage: "0~1단계에서는 Language Transfer를 그대로 진행" },
+      { days: ["화", "목"], activity: "대량 입력 비중 확대, 구조 학습", fromStage: 0 },
+      { days: ["토"], activity: "튜터 수업 30~60분, 주간 일기", fromStage: 2, note: "3단계부터 튜터는 주 2회(요일 자유)" },
+      { days: ["일"], activity: "즐기기용 영상이나 영화 1편, 주간 점검 10분", fromStage: 0 }
+    ],
+    dailyOrderTips: ["Anki 복습(초록 카드)부터 처리하고 새 카드로 넘어가기", "Anki 빨간 카드는 0이 될 때까지. 바쁘면 다음 날로 넘어가도 괜찮음", "Language Transfer는 문제가 나오면 멈추고 소리 내서 답하기", "0분인 날만 만들지 않기. 최소판 15분도 공부한 날"],
+    exams: [
+      { name: "DELE A2", targetStage: 2, target: "2단계 끝(약 8개월 차)", note: "스페인 국적 취득 요건(CCSE와 함께). 자격은 만료되지 않음" },
+      { name: "DELE B1", targetStage: 3, target: "3단계 끝(약 15개월 차)" },
+      { name: "DELE B2", targetStage: 4, target: "4단계(약 24개월 차)", note: "직장·행정 대응 수준" }
+    ],
+    monthlyReview: { checklist: ["이번 달 누적 시간과 단계별 목표 시간 비교", "지난달에 본 Dreaming Spanish 영상 하나를 다시 보고 이해도 비교", "1분 자기소개를 녹음해 지난달 녹음과 비교", "현재 단계의 넘어가는 기준 확인"] },
+    adjustmentRules: [
+      { signal: "자료가 절반도 이해되지 않음", adjustment: "한 단계 쉬운 자료로 내림" },
+      { signal: "자료가 거의 다 이해되고 지루함", adjustment: "한 단계 어려운 자료를 섞음" },
+      { signal: "Anki 복습이 30분을 넘김", adjustment: "새 단어 수를 하루 5개로 줄임" },
+      { signal: "2주 연속 최소판만 함", adjustment: "공부 시간대를 바꾸거나 1시간판을 45분으로 줄임" },
+      { signal: "말할 때 단어가 안 떠오름", adjustment: "혼잣말·튜터 비중을 늘림" }
+    ],
+    resources: [
+      { name: "Language Transfer Complete Spanish", category: "구조", stages: [0, 1], url: "https://www.languagetransfer.org/complete-spanish", cost: "무료", howTo: "영어를 발판으로 문장 구조를 추론하는 오디오 강좌. 문제가 나오면 멈추고 소리 내서 답하기" },
+      { name: "Learn to read Spanish 🇪🇸 - The Spanish writing system", category: "발음", stages: [0], url: "https://ankiweb.net/shared/info/1195472731", cost: "무료", howTo: "Anki 발음 덱. 소리를 듣고 소리 내 따라 하기" },
+      { name: "Spanish Frequency Core Vocabulary 1–50", category: "단어", stages: [0], url: "https://ankiweb.net/shared/info/2080826841", cost: "무료", howTo: "가장 자주 쓰는 50단어 Anki 덱" },
+      { name: "Basic European Spanish Sentences", category: "단어", stages: [1], url: "https://ankiweb.net/shared/info/1711857842", cost: "무료", howTo: "스페인식 기초 문장 Anki 덱" },
+      { name: "Spanish Top 5000 Vocabulary", category: "단어", stages: [1], url: "https://ankiweb.net/shared/decks?search=Spanish%20Top%205000%20Vocabulary", cost: "무료", howTo: "처음 1,000단어까지. 이상한 이미지 카드는 정지" },
+      { name: "Anki", category: "도구", stages: [0, 1, 2, 3, 4], url: "https://apps.ankiweb.net/", cost: "PC·안드로이드 무료, iOS 유료", howTo: "앞면 스페인어, 뒷면 영어. 하루 새 카드 10~15장" },
+      { name: "Dreaming Spanish", category: "입력", stages: [0, 1, 2], url: "https://www.dreamingspanish.com", cost: "무료 영상 + 유료 플랜", howTo: "억양 필터를 스페인으로. 시청 시간 자동 기록" },
+      { name: "Language Reactor", category: "도구", stages: [1, 2, 3, 4], url: "https://www.languagereactor.com", cost: "기본 무료", howTo: "유튜브·넷플릭스 이중자막, 두 번째 줄은 영어" },
+      { name: "Hoy Hablamos Básico", category: "입력", stages: [2], url: "https://www.hoyhablamos.com", cost: "무료, 스크립트 유료", howTo: "A2 대상 스페인 팟캐스트" },
+      { name: "Hoy Hablamos", category: "입력", stages: [3], url: "https://www.hoyhablamos.com", cost: "무료, 스크립트 유료", howTo: "평일 매일 새 에피소드" },
+      { name: "Unlimited Spanish (Óscar)", category: "입력·말하기", stages: [3], url: "", cost: "무료", howTo: "스페인 화자, 후반부 질문-답 유창성 연습" },
+      { name: "Cocina abierta de Karlos Arguiñano", category: "요리", stages: [3], url: "", cost: "방송·클립", howTo: "레시피 단위로 짧아 집중 듣기에 적합" },
+      { name: "Un país para comérselo", category: "여행·요리", stages: [3, 4], url: "", cost: "RTVE 다시보기, 해외 시청 제한 확인 필요", howTo: "스페인 지역을 돌며 음식을 다루는 여행 다큐" },
+      { name: "튜터(italki, Preply 등)", category: "말하기", stages: [2, 3, 4], url: "", cost: "유료", howTo: "스페인 출신, 가능하면 북부 출신" }
+    ]
+  };
+  static SAMPLE = [{ date: "2026-10-06", stage: 0, entries: [
+    { block: "vocab", task: "Anki 발음 덱(Learn to read Spanish)", minutes: null, note: "새 카드 10장" },
+    { block: "structure", task: "Language Transfer Complete Spanish", minutes: null, note: "1~2강" }
+  ], reflection: { learned: "모음 e(mesa), 이중모음 uo(cuota)", difficult: "첫날이라 Anki 사용법과 새 소리가 계속 어렵게 느껴짐" } }];
+  static KEY = 'camino.v1';
+  static WD = '일월화수목금토';
+  static WEEKS = 32;
+  static COLORS = { vocab: 'var(--accent-foreground-violet)', input: 'var(--accent-foreground-cyan)', structure: 'var(--accent-foreground-orange)', output: 'var(--accent-foreground-pink)', review: 'var(--line-solid-strong)' };
+  static HEAT = ['var(--fill-normal)', 'var(--green-90)', 'var(--green-70)', 'var(--green-50)', 'var(--green-30)'];
+  static HEAT_LABELS = ['0분', '1~29분', '30~59분', '60~119분', '120분 이상'];
+  static SCENARIOS = { '예시 · 1단계 수요일': ['2026-11-18', 1], '예시 · 1단계 일요일': ['2026-11-22', 1], '예시 · 2단계 월요일': ['2027-02-15', 2], '예시 · 2단계 토요일': ['2027-02-20', 2] };
+  static SCREENS = [['today', '오늘', 'home', 'home-fill'], ['log', '기록', 'calendar', 'calendar'], ['progress', '진도', 'graduation', 'graduation'], ['review', '월간 점검', 'document-text', 'document-text'], ['settings', '설정', 'setting', 'setting']];
+
+  state = { data: null, w: 0, screen: 'today', editing: null, draft: null, tipsOpen: false, openRes: null, undo: null, selDate: null, calMonth: null, gridPage: 0, ratio: 'month', editRefl: null, revMonth: null, importMsg: null };
+  rootRef = React.createRef();
+  fileRef = React.createRef();
+  uid = Math.random().toString(36).slice(2);
+
+  componentDidMount() {
+    this.load();
+    this.observe();
+    if (this.props.initialScreen) this.setState({ screen: this.props.initialScreen });
+    this.onSync = (e) => { if (!this.scenario() && !(e.detail && e.detail.from === this.uid)) this.load(true); };
+    this.onStorage = (e) => { if (e.key === Component.KEY && !this.scenario()) this.load(true); };
+    window.addEventListener('camino-sync', this.onSync);
+    window.addEventListener('storage', this.onStorage);
+  }
+  componentDidUpdate(prev) {
+    if (prev.scenario !== this.props.scenario) this.load();
+    if (prev.initialScreen !== this.props.initialScreen && this.props.initialScreen) this.setState({ screen: this.props.initialScreen });
+    this.observe();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('camino-sync', this.onSync);
+    window.removeEventListener('storage', this.onStorage);
+    if (this.ro) this.ro.disconnect();
+    clearTimeout(this.undoT);
+  }
+  observe() {
+    const el = this.rootRef.current;
+    if (this.ro || !el || !window.ResizeObserver) return;
+    this.ro = new ResizeObserver((es) => { const w = Math.round(es[0].contentRect.width); if (w !== this.state.w) this.setState({ w }); });
+    this.ro.observe(el);
+  }
+
+  iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  parse(s) { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2] || 1); }
+  add(s, n) { const d = this.parse(s); d.setDate(d.getDate() + n); return this.iso(d); }
+  monday(s) { return this.add(s, -((this.parse(s).getDay() + 6) % 7)); }
+  shiftMonth(ym, n) { const d = this.parse(ym + '-01'); d.setMonth(d.getMonth() + n); return this.iso(d).slice(0, 7); }
+  fmt(m) { m = Math.round(m || 0); if (m < 60) return m + '분'; const h = Math.floor(m / 60); const r = m % 60; return h + '시간' + (r ? ' ' + r + '분' : ''); }
+  dayName(s) { const d = this.parse(s); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + Component.WD[d.getDay()] + '요일'; }
+  scenario() { return Component.SCENARIOS[this.props.scenario] || null; }
+  today() { const sc = this.scenario(); return sc ? sc[0] : this.iso(new Date()); }
+  stageOf(data) { const v = data && data.settings && data.settings.stage; if (v != null) return v; const sc = this.scenario(); return sc ? sc[1] : 0; }
+  bname(id) { if (id === 'review') return '주간 점검'; const b = Component.PLAN.blocks.find((x) => x.id === id); return b ? b.name.split(' 또는 ')[0] : id; }
+  sum(es) { return (es || []).reduce((a, e) => a + (Number(e.minutes) || 0), 0); }
+
+  seed() { return { version: 1, settings: { startDate: Component.PLAN.meta.startDate, stage: 0, defaultMode: '1h' }, logs: JSON.parse(JSON.stringify(Component.SAMPLE)), gates: {}, monthly: {} }; }
+  load(keepUi) {
+    const sc = this.scenario();
+    let data = null;
+    if (sc) data = this.makeDemo(sc[0], sc[1]);
+    else {
+      try { data = JSON.parse(localStorage.getItem(Component.KEY)); } catch (e) { data = null; }
+      if (!data || !Array.isArray(data.logs)) data = this.seed();
+    }
+    if (keepUi) this.setState({ data });
+    else this.setState({ data, editing: null, draft: null, undo: null, selDate: null, calMonth: null, gridPage: 0, editRefl: null, revMonth: null, importMsg: null });
+  }
+  save(data) {
+    this.setState({ data });
+    if (this.scenario()) return;
+    try { localStorage.setItem(Component.KEY, JSON.stringify(data)); } catch (e) {}
+    window.dispatchEvent(new CustomEvent('camino-sync', { detail: { from: this.uid } }));
+  }
+  mutate(date, fn) {
+    const data = JSON.parse(JSON.stringify(this.state.data || this.seed()));
+    let log = data.logs.find((l) => l.date === date);
+    if (!log) {
+      log = { date, stage: this.stageOf(data), mode: data.settings.defaultMode || '1h', entries: [], reflection: { learned: '', difficult: '' } };
+      data.logs.push(log);
+      data.logs.sort((a, b) => (a.date < b.date ? -1 : 1));
+    }
+    fn(log, data);
+    this.save(data);
+  }
+  entryOf(date, key) { const d = this.state.data; const log = d && d.logs.find((l) => l.date === date); return log ? log.entries.find((e) => e.block === key) || null : null; }
+
+  makeDemo(date, stage) {
+    const P = Component.PLAN; let seed = 11;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    const logs = []; let d = P.meta.startDate; let cum = 0; let st = 0; const end = this.parse(date);
+    while (d < date) {
+      const left = (end - this.parse(d)) / 864e5;
+      if (left <= 10 || rnd() > 0.08) {
+        const r = rnd(); const mode = r < 0.1 ? 'min' : r < 0.65 ? '1h' : '2h';
+        const entries = this.cardsFor(d, st, mode).map((c) => ({ block: c.key, task: c.task, minutes: c.target, note: '' }));
+        logs.push({ date: d, stage: st, mode, entries, reflection: { learned: '', difficult: '' } });
+        cum += entries.reduce((a, e) => a + e.minutes, 0);
+        while (st < stage && cum >= P.stages[st].cumulativeHoursTarget * 60) st++;
+      }
+      d = this.add(d, 1);
+    }
+    const first = this.cardsFor(date, stage, '1h')[0];
+    logs.push({ date, stage, mode: '1h', entries: [{ block: first.key, task: first.task, minutes: first.target, note: '' }], reflection: { learned: '', difficult: '' } });
+    return { version: 1, demo: true, settings: { startDate: P.meta.startDate, stage, defaultMode: '1h' }, logs, gates: {}, monthly: {} };
+  }
+
+  cardsFor(date, stage, modeId) {
+    const P = Component.PLAN; const wd = Component.WD[this.parse(date).getDay()];
+    const st = P.stages[stage] || P.stages[0]; const mode = P.modes.find((m) => m.id === modeId) || P.modes[1];
+    const R = (day) => P.weeklyRhythm.find((r) => r.days.indexOf(day) >= 0);
+    if (wd === '일') {
+      const parts = R('일').activity.split(', ');
+      const rm = parseInt((parts[1].match(/(\d+)분/) || [0, 10])[1], 10);
+      return [
+        { key: 'input', name: this.bname('input'), task: parts[0], res: st.tasks.input.resources, target: Math.max(5, mode.totalMinutes - rm) },
+        { key: 'review', name: '주간 점검', task: parts[1], res: [], target: rm }
+      ];
+    }
+    const listen = R('월'); const sat = R('토');
+    const minParts = modeId === 'min' ? mode.description.split('.')[0].split(' + ') : null;
+    const out = [];
+    P.blocks.forEach((b) => {
+      const t = st.tasks[b.id]; let min = mode.blockMinutes[b.id] || 0;
+      let name = b.name.split(' 또는 ')[0]; let task = t.task;
+      if (b.id === 'structure' && listen.days.indexOf(wd) >= 0 && stage >= listen.fromStage) { name = b.name.split(' 또는 ')[1]; task = listen.activity; }
+      if (b.id === 'output' && wd === '토' && stage === sat.fromStage) { task = sat.activity; min = Math.max(min, parseInt((sat.activity.match(/(\d+)~/) || [0, 30])[1], 10)); }
+      if (min <= 0) return;
+      if (minParts && minParts[out.length]) task = minParts[out.length];
+      out.push({ key: b.id, name, task, res: t.resources, target: min });
+    });
+    return out;
+  }
+  rhythm(date, stage) {
+    const wd = Component.WD[this.parse(date).getDay()];
+    const r = Component.PLAN.weeklyRhythm.find((x) => x.days.indexOf(wd) >= 0);
+    if (!r) return null;
+    if (stage < r.fromStage) return r.noteBeforeStage || null;
+    if (r.note && stage > r.fromStage) return r.note;
+    return r.activity;
+  }
+  resInfo(s) {
+    const norm = (x) => x.replace(/\(.*?\)/g, '').trim().toLowerCase();
+    const n = norm(s); const R = Component.PLAN.resources;
+    const exact = R.find((r) => norm(r.name) === n);
+    if (exact) return exact;
+    const inside = R.filter((r) => n.indexOf(norm(r.name)) >= 0).sort((a, b) => norm(b.name).length - norm(a.name).length)[0];
+    if (inside) return inside;
+    return R.filter((r) => norm(r.name).indexOf(n) >= 0).sort((a, b) => norm(a.name).length - norm(b.name).length)[0] || null;
+  }
+
+  toggle(date, c, checked) {
+    if (checked) {
+      const removed = this.entryOf(date, c.key);
+      this.mutate(date, (log) => { log.entries = log.entries.filter((e) => e.block !== c.key); });
+      this.setState({ editing: null, draft: null });
+      if (removed) this.flash(this.bname(c.key) + ' 기록을 지웠어요', () => this.mutate(date, (log) => { log.entries = log.entries.filter((e) => e.block !== removed.block).concat([removed]); }));
+      return;
+    }
+    const entry = { block: c.key, task: c.task, minutes: c.target, note: '' };
+    this.mutate(date, (log) => { log.entries = log.entries.filter((e) => e.block !== c.key).concat([entry]); });
+    clearTimeout(this.undoT);
+    this.setState({ undo: null, editing: date + '|' + c.key, draft: { min: String(entry.minutes), note: '' } });
+  }
+  flash(text, run) {
+    clearTimeout(this.undoT);
+    this.undoT = setTimeout(() => this.setState({ undo: null }), 6000);
+    this.setState({ undo: { text, run } });
+  }
+  undo() {
+    const u = this.state.undo; if (!u) return;
+    clearTimeout(this.undoT);
+    this.setState({ undo: null });
+    u.run();
+  }
+  update(fn) { const data = JSON.parse(JSON.stringify(this.state.data || this.seed())); fn(data); this.save(data); }
+  toggleGate(id, i, n) {
+    this.update((d) => { d.gates = d.gates || {}; const g = (d.gates[id] || []).slice(0, n); while (g.length < n) g.push(false); g[i] = !g[i]; d.gates[id] = g; });
+  }
+  setStage(n) { const today = this.today(); this.update((d) => { d.settings.stage = n; const l = d.logs.find((x) => x.date === today); if (l) l.stage = n; }); }
+  advance(ready) {
+    const from = this.stageOf(this.state.data || this.seed());
+    if (!ready || from >= Component.PLAN.stages.length - 1) return;
+    this.setStage(from + 1);
+    this.flash((from + 1) + '단계를 시작했어요', () => this.setStage(from));
+  }
+  pickStage(n) {
+    const from = this.stageOf(this.state.data || this.seed());
+    if (n === from) return;
+    this.setStage(n);
+    this.flash(n + '단계로 바꿨어요', () => this.setStage(from));
+  }
+  setMonthly(ym, fn) { this.update((d) => { d.monthly = d.monthly || {}; const m = Object.assign({ checks: [], memo: '', signals: [] }, d.monthly[ym]); fn(m); d.monthly[ym] = m; }); }
+  setSetting(k, v) { this.update((d) => { d.settings[k] = v; }); }
+  exportData() {
+    const d = this.state.data || this.seed();
+    const name = 'camino-' + this.today() + '.json';
+    const out = { version: 1, exportedAt: new Date().toISOString(), settings: d.settings, logs: d.logs, gates: d.gates || {}, monthly: d.monthly || {} };
+    try {
+      const url = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' }));
+      const a = document.createElement('a'); a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      this.setState({ importMsg: { tone: 'positive', title: '기록을 내보냈어요', text: name + ' 파일로 저장했어요.' } });
+    } catch (e) {
+      this.setState({ importMsg: { tone: 'negative', title: '내보내지 못했어요', text: '브라우저에서 다운로드를 막고 있는지 확인해 주세요.' } });
+    }
+  }
+  importFile(ev) {
+    const f = ev.target.files && ev.target.files[0];
+    ev.target.value = '';
+    if (!f) return;
+    f.text().then((txt) => {
+      let j = null; try { j = JSON.parse(txt); } catch (e) { j = null; }
+      const logs = j && Array.isArray(j.logs) ? j.logs.filter((l) => l && /^\d{4}-\d{2}-\d{2}$/.test(l.date) && Array.isArray(l.entries)) : null;
+      if (!logs) { this.setState({ importMsg: { tone: 'negative', title: '가져오지 못했어요', text: 'logs 배열이 있는 JSON 파일인지 확인해 주세요.' } }); return; }
+      const prev = JSON.parse(JSON.stringify(this.state.data || this.seed()));
+      const full = !!(j.settings && typeof j.settings === 'object');
+      this.update((d) => {
+        if (full) {
+          d.settings = Object.assign({}, d.settings, j.settings);
+          d.logs = logs.slice(); d.gates = j.gates || {}; d.monthly = j.monthly || {};
+        } else {
+          const map = {}; d.logs.forEach((l) => { map[l.date] = l; }); logs.forEach((l) => { map[l.date] = l; });
+          d.logs = Object.keys(map).map((k) => map[k]);
+        }
+        d.logs.sort((a, b) => (a.date < b.date ? -1 : 1));
+        d.logs.forEach((l) => { l.reflection = Object.assign({ learned: '', difficult: '' }, l.reflection); });
+      });
+      this.setState({ importMsg: { tone: 'positive', title: '기록 ' + logs.length + '일을 가져왔어요', text: full ? '내보낸 파일로 전체를 바꿨어요.' : '같은 날짜는 가져온 기록으로 바꿨어요.' } });
+      this.flash('기록을 가져왔어요', () => { this.save(prev); this.setState({ importMsg: null }); });
+    });
+  }
+  openEdit(date, key, target) {
+    const e = this.entryOf(date, key);
+    this.setState({ editing: date + '|' + key, draft: { min: e && e.minutes != null ? String(e.minutes) : String(target || ''), note: (e && e.note) || '' } });
+  }
+  saveDraft(date, key) {
+    const d = this.state.draft || {}; const m = parseInt(d.min, 10);
+    this.mutate(date, (log) => { const e = log.entries.find((x) => x.block === key); if (e) { e.minutes = isNaN(m) ? null : Math.max(0, m); e.note = (d.note || '').trim(); } });
+    this.setState({ editing: null, draft: null });
+  }
+  setRefl(date, field, value) {
+    this.mutate(date, (log) => { log.reflection = Object.assign({ learned: '', difficult: '' }, log.reflection, { [field]: value }); });
+  }
+  setMode(id) {
+    this.mutate(this.today(), (log) => { log.mode = id; });
+    this.setState({ editing: null, draft: null });
+  }
+  fixMissing() {
+    const data = this.state.data; if (!data) return;
+    for (const l of data.logs) {
+      const e = (l.entries || []).find((x) => x.minutes == null || x.minutes === '');
+      if (!e) continue;
+      const c = this.cardsFor(l.date, l.stage || 0, l.mode || '1h').find((x) => x.key === e.block);
+      if (!(l.date === this.today() && this.state.screen === 'today')) this.setState({ screen: 'log', selDate: l.date, calMonth: l.date.slice(0, 7), editRefl: null });
+      this.openEdit(l.date, e.block, c ? c.target : '');
+      return;
+    }
+  }
+  selectDate(d) { this.setState({ selDate: d, calMonth: d.slice(0, 7), editing: null, draft: null, editRefl: null }); }
+  go(k) { this.setState({ screen: k, editing: null, draft: null, editRefl: null, importMsg: null }); }
+
+  buildDay(data, date, today) {
+    const P = Component.PLAN; const s = this.state;
+    const log = data.logs.find((l) => l.date === date) || null;
+    const entries = (log && log.entries) || [];
+    const stage = date === today || !log ? this.stageOf(data) : (log.stage || 0);
+    const modeId = (log && log.mode) || data.settings.defaultMode || '1h';
+    const mode = P.modes.find((m) => m.id === modeId) || P.modes[1];
+    const base = this.cardsFor(date, stage, modeId);
+    const extra = entries.filter((e) => !base.some((c) => c.key === e.block)).map((e) => ({ key: e.block, name: this.bname(e.block), task: e.task, res: [], target: e.minutes || 0, extra: true }));
+    const tips = P.dailyOrderTips;
+    const tipFor = (c) => tips.find((t) => {
+      const m = t.match(/^(Anki|Language Transfer)/); if (!m) return false;
+      if ((c.task + ' ' + c.res.join(' ')).indexOf(m[1]) < 0) return false;
+      return c.task.indexOf(t.replace(/^(Anki|Language Transfer)는?\s*/, '')) < 0;
+    }) || null;
+    const cards = base.concat(extra).map((c) => {
+      const e = entries.find((x) => x.block === c.key) || null;
+      const checked = !!e; const minutes = e ? e.minutes : null;
+      const needs = checked && (minutes == null || minutes === '');
+      const isEdit = checked && s.editing === date + '|' + c.key;
+      const tip = tipFor(c);
+      const resources = c.res.map((name, j) => {
+        const info = this.resInfo(name); const id = date + ':' + c.key + ':' + j; const open = s.openRes === id;
+        return { name, hasInfo: !!info, showInfo: open && !!info, open, chevron: open ? 'chevron-up' : 'chevron-down', howTo: info ? info.howTo : '', cost: info ? info.cost : '', hasUrl: !!(info && info.url), url: (info && info.url) || '', onToggle: () => this.setState({ openRes: open ? null : id }) };
+      });
+      return {
+        key: c.key, blockName: c.name, color: Component.COLORS[c.key] || 'var(--line-solid-strong)',
+        task: c.task, loggedTask: e ? e.task : c.task, resources, hasResources: resources.length > 0,
+        targetLabel: c.target + '분', checked, unchecked: !checked, extra: !!c.extra,
+        needsMinutes: needs, hasMinutes: checked && !needs, minutesLabel: (minutes || 0) + '분',
+        note: (e && e.note) || '', hasNote: !!(e && e.note),
+        editing: isEdit, showLogged: checked && !isEdit,
+        draftMin: isEdit && s.draft ? s.draft.min : '', draftNote: isEdit && s.draft ? s.draft.note : '',
+        onDraftMin: (ev) => this.setState({ draft: Object.assign({}, this.state.draft, { min: ev.target.value }) }),
+        onDraftNote: (ev) => this.setState({ draft: Object.assign({}, this.state.draft, { note: ev.target.value }) }),
+        onSave: () => this.saveDraft(date, c.key), onSkip: () => this.setState({ editing: null, draft: null }),
+        onEdit: () => this.openEdit(date, c.key, c.target), onToggle: () => this.toggle(date, c, checked),
+        tip, showTip: !!tip && !checked
+      };
+    });
+    return { log, entries, stage, mode, base, cards, minutes: this.sum(entries), target: base.reduce((a, c) => a + c.target, 0), refl: (log && log.reflection) || {} };
+  }
+
+  renderVals() {
+    const P = Component.PLAN; const s = this.state;
+    const data = s.data || this._seed || (this._seed = this.seed());
+    const today = this.today(); const stage = this.stageOf(data); const st = P.stages[stage] || P.stages[0];
+    const forced = this.props.layout === 'desktop' || this.props.layout === 'mobile' ? this.props.layout : null;
+    const isMobile = (forced || (s.w && s.w < 760 ? 'mobile' : 'desktop')) === 'mobile';
+    const dt = this.parse(today); const isSunday = dt.getDay() === 0;
+    const T = this.buildDay(data, today, today);
+    const baseCards = T.cards.filter((c) => !c.extra);
+    const doneCount = baseCards.filter((c) => c.checked).length;
+    const allDone = baseCards.length > 0 && doneCount === baseCards.length;
+
+    const dayMin = {}; const dayCnt = {};
+    data.logs.forEach((l) => { dayMin[l.date] = this.sum(l.entries); dayCnt[l.date] = (l.entries || []).length; });
+    const studied = (d) => dayCnt[d] > 0;
+    let sd = studied(today) ? today : this.add(today, -1); let streak = 0;
+    while (studied(sd)) { streak++; sd = this.add(sd, -1); }
+    const cumMin = data.logs.reduce((a, l) => a + this.sum(l.entries), 0);
+    const missing = data.logs.reduce((a, l) => a + (l.entries || []).filter((e) => e.minutes == null || e.minutes === '').length, 0);
+    const showReflection = allDone || !!(T.refl.learned || T.refl.difficult);
+    const rhythm = this.rhythm(today, stage);
+    const tips = P.dailyOrderTips;
+
+    const firstLog = data.logs.length ? data.logs[0].date : today;
+    const startISO = [data.settings.startDate || P.meta.startDate, firstLog].sort()[0];
+    const sel = s.selDate || today;
+    const level = (d) => { if (!studied(d)) return 0; const m = dayMin[d]; return m >= 120 ? 4 : m >= 60 ? 3 : m >= 30 ? 2 : 1; };
+    const cell = (d) => {
+      const blank = d < startISO; const future = d > today; const lv = level(d); const pd = this.parse(d);
+      return {
+        key: d, num: pd.getDate(), disabled: blank || future, cursor: blank || future ? 'default' : 'pointer',
+        bg: blank ? 'transparent' : future ? 'var(--fill-alternative)' : Component.HEAT[lv],
+        ring: d === sel && !blank ? '0 0 0 2px var(--label-normal)' : d === today ? 'inset 0 0 0 2px var(--blue-50)' : 'none',
+        fg: lv >= 3 && !future ? 'var(--static-white)' : future || blank ? 'var(--label-assistive)' : 'var(--label-normal)',
+        title: blank ? '' : (pd.getMonth() + 1) + '월 ' + pd.getDate() + '일 ' + Component.WD[pd.getDay()] + (future ? '' : ' · ' + this.fmt(dayMin[d] || 0)),
+        onClick: () => this.selectDate(d)
+      };
+    };
+
+    const W = Component.WEEKS; const sMon = this.monday(startISO); const tMon = this.monday(today);
+    const weeksSince = Math.round((this.parse(tMon) - this.parse(sMon)) / (7 * 864e5));
+    let winStart = weeksSince < W ? sMon : this.add(tMon, -(W - 1) * 7);
+    winStart = this.add(winStart, -s.gridPage * W * 7);
+    if (winStart < sMon) winStart = sMon;
+    let prevM = -1;
+    const grid = [];
+    for (let w = 0; w < W; w++) {
+      const wk = this.add(winStart, w * 7); const m = this.parse(wk).getMonth();
+      const days = []; for (let i = 0; i < 7; i++) days.push(cell(this.add(wk, i)));
+      grid.push({ key: wk, label: m !== prevM ? (m + 1) + '월' : '', days });
+      prevM = m;
+    }
+    const winEnd = this.add(winStart, W * 7 - 1);
+    const ym = (x) => { const d = this.parse(x); return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월'; };
+
+    const calMonth = s.calMonth || sel.slice(0, 7);
+    const cp = this.parse(calMonth + '-01');
+    const lead = (cp.getDay() + 6) % 7; const daysIn = new Date(cp.getFullYear(), cp.getMonth() + 1, 0).getDate();
+    const calCells = [];
+    for (let i = 0; i < lead; i++) calCells.push({ key: 'e' + i, empty: true, filled: false });
+    for (let i = 1; i <= daysIn; i++) calCells.push(Object.assign(cell(calMonth + '-' + String(i).padStart(2, '0')), { empty: false, filled: true }));
+
+    const R = this.buildDay(data, sel, today);
+    const detFuture = sel > today; const detBefore = sel < startISO; const detActive = !detFuture && !detBefore;
+    const rBase = R.cards.filter((c) => !c.extra);
+    const detHasRefl = !!(R.refl.learned || R.refl.difficult);
+    const reflEditing = s.editRefl === sel;
+
+    const wkStart = this.monday(today); const wkEnd = this.add(wkStart, 6);
+    const mStart = today.slice(0, 7) + '-01'; const mEnd = today.slice(0, 7) + '-31';
+    const inR = (d, a, b) => d >= a && d <= b;
+    const rangeSum = (a, b) => data.logs.filter((l) => inR(l.date, a, b)).reduce((x, l) => x + this.sum(l.entries), 0);
+    const rangeDays = (a, b) => data.logs.filter((l) => inR(l.date, a, b) && (l.entries || []).length).length;
+    const rr = s.ratio === 'week' ? [wkStart, wkEnd] : s.ratio === 'month' ? [mStart, mEnd] : ['0000-00-00', '9999-99-99'];
+    const by = { vocab: 0, input: 0, structure: 0, output: 0, review: 0 };
+    data.logs.forEach((l) => { if (!inR(l.date, rr[0], rr[1])) return; (l.entries || []).forEach((e) => { by[e.block] = (by[e.block] || 0) + (Number(e.minutes) || 0); }); });
+    const tot = Object.keys(by).reduce((a, k) => a + by[k], 0);
+    const ratioRows = P.blocks.map((b) => ({ key: b.id, name: b.name })).concat(by.review > 0 ? [{ key: 'review', name: '주간 점검' }] : []).map((r) => ({
+      key: r.key, name: r.name, color: Component.COLORS[r.key], flex: by[r.key], minLabel: this.fmt(by[r.key]), pct: tot ? Math.round((by[r.key] / tot) * 100) + '%' : '0%'
+    }));
+    const cumH = cumMin / 60; const lastSt = P.stages[P.stages.length - 1];
+    const gTexts = st.gate.split(' · '); const gSaved = (data.gates && data.gates[stage]) || [];
+    const gateItems = gTexts.map((text, i) => {
+      const fn = () => this.toggleGate(stage, i, gTexts.length);
+      return { key: stage + ':' + i, text, checked: !!gSaved[i], onToggle: fn };
+    });
+    const gLeft = gateItems.filter((g) => !g.checked).length;
+    const hLeft = Math.max(0, st.cumulativeHoursTarget - cumH);
+    const hTxt = (Math.ceil(hLeft * 10) / 10).toFixed(1).replace(/\.0$/, '');
+    const ready = gLeft === 0;
+    const short = (d) => { const x = this.parse(d); return (x.getMonth() + 1) + '월 ' + x.getDate() + '일'; };
+    const prog = {
+      goalText: P.meta.goal, principle: P.meta.principle,
+      curPeriod: st.period, curTitle: stage + '단계 · ' + st.name, curFocus: st.focus,
+      cumHText: cumH.toFixed(1) + '시간', curTargetText: st.cumulativeHoursTarget.toLocaleString() + '시간',
+      curPct: Math.min(100, (cumH / st.cumulativeHoursTarget) * 100).toFixed(1) + '%',
+      gateItems, hasNextStage: stage < P.stages.length - 1, isReady: ready, notReady: !ready,
+      readyNote: ready ? '기준을 모두 채웠어요' : '기준 ' + gLeft + '개가 남았어요',
+      onAdvance: () => this.advance(ready),
+      roadmapMeta: '누적 ' + cumH.toFixed(1) + ' / ' + lastSt.cumulativeHoursTarget.toLocaleString() + '시간',
+      stageRows: P.stages.map((sg, i) => {
+        const done = sg.id < stage; const current = sg.id === stage;
+        const ex = P.exams.find((e) => e.targetStage === sg.id);
+        const pl = done ? data.logs.find((l) => (l.stage || 0) > sg.id) : null;
+        return {
+          key: 's' + sg.id, id: sg.id, title: sg.id + '단계 · ' + sg.name,
+          meta: sg.period + ' · 누적 ' + sg.cumulativeHoursTarget.toLocaleString() + '시간',
+          focus: sg.focus, gate: sg.gate, done, current, future: !done && !current,
+          hasLine: i < P.stages.length - 1, lineColor: done ? 'var(--accent-foreground-green)' : 'var(--line-normal-normal)',
+          titleColor: current ? 'var(--blue-50)' : 'var(--label-strong)',
+          hasState: done || current, stateText: current ? '진행 중' : pl ? short(pl.date) + ' 통과' : '통과',
+          stateColor: current ? 'var(--blue-50)' : 'var(--green-30)',
+          hasExam: !!ex, examName: ex ? ex.name : '', examTarget: ex ? ex.target : '',
+          examNote: (ex && ex.note) || '', hasExamNote: !!(ex && ex.note)
+        };
+      })
+    };
+    const curYM = today.slice(0, 7); const revYM = s.revMonth || curYM; const md = (data.monthly && data.monthly[revYM]) || {};
+    const rp = this.parse(revYM + '-01'); const mEndISO = this.iso(new Date(rp.getFullYear(), rp.getMonth() + 1, 0));
+    const refDay = mEndISO < today ? mEndISO : today;
+    const upTo = data.logs.filter((l) => l.date <= mEndISO);
+    const stAt = revYM === curYM || !upTo.length ? stage : (upTo[upTo.length - 1].stage || 0); const stAtObj = P.stages[stAt] || P.stages[0];
+    const cumThrough = upTo.reduce((a, l) => a + this.sum(l.entries), 0);
+    const revChecks = P.monthlyReview.checklist.map((text, i) => {
+      const detail = /누적 시간/.test(text) ? '이번 달 ' + this.fmt(rangeSum(revYM + '-01', mEndISO)) + ' · 누적 ' + (cumThrough / 60).toFixed(1) + ' / ' + stAtObj.cumulativeHoursTarget.toLocaleString() + '시간(' + stAt + '단계 목표)' : /넘어가는 기준/.test(text) ? stAtObj.gate : '';
+      return { key: 'c' + i, text, checked: !!(md.checks && md.checks[i]), detail, hasDetail: !!detail, hasLink: /넘어가는 기준/.test(text), onLink: () => this.go('progress'), onToggle: () => this.setMonthly(revYM, (m) => { const a = (m.checks || []).slice(); a[i] = !a[i]; m.checks = a; }) };
+    });
+    const recent = data.logs.filter((l) => l.date >= this.add(refDay, -13) && l.date <= refDay && (l.entries || []).length);
+    const detect = (sig) => /Anki 복습이 30분/.test(sig) ? recent.some((l) => l.entries.some((e) => e.block === 'vocab' && Number(e.minutes) > 30)) : /최소판만/.test(sig) ? recent.length >= 7 && recent.every((l) => (l.mode || data.settings.defaultMode) === 'min') : false;
+    const rev = {
+      revTitle: rp.getFullYear() + '년 ' + (rp.getMonth() + 1) + '월', revNoPrev: revYM <= startISO.slice(0, 7), revNoNext: revYM >= curYM,
+      onRevPrev: () => this.setState({ revMonth: this.shiftMonth(revYM, -1) }), onRevNext: () => this.setState({ revMonth: this.shiftMonth(revYM, 1) }),
+      revChecks, revDoneLabel: revChecks.filter((c) => c.checked).length + ' / ' + revChecks.length,
+      revRules: P.adjustmentRules.map((r, i) => ({ key: 'r' + i, signal: r.signal, adjustment: r.adjustment, checked: !!(md.signals && md.signals[i]), detected: detect(r.signal), onToggle: () => this.setMonthly(revYM, (m) => { const a = (m.signals || []).slice(); a[i] = !a[i]; m.signals = a; }) })),
+      revMemo: md.memo || '', onRevMemo: (ev) => { const v = ev.target.value; this.setMonthly(revYM, (m) => { m.memo = v; }); }
+    };
+    const setv = {
+      startDate: data.settings.startDate || P.meta.startDate,
+      onStartDate: (ev) => { const v = ev.target.value; if (/^\d{4}-\d{2}-\d{2}$/.test(v)) this.setSetting('startDate', v); },
+      defaultMode: data.settings.defaultMode || '1h', onDefaultMode: (v) => this.setSetting('defaultMode', v),
+      stageOptions: P.stages.map((sg) => ({ key: 'so' + sg.id, title: sg.id + '단계 · ' + sg.name, meta: sg.period + ' · 누적 ' + sg.cumulativeHoursTarget.toLocaleString() + '시간', checked: sg.id === stage, onPick: () => this.pickStage(sg.id) })),
+      dataSummary: '저장된 기록 ' + data.logs.filter((l) => (l.entries || []).length).length + '일 · 누적 ' + (cumMin / 60).toFixed(1) + '시간',
+      fileRef: this.fileRef, onExport: () => this.exportData(), onPickFile: () => { if (this.fileRef.current) this.fileRef.current.click(); }, onImportFile: (ev) => this.importFile(ev),
+      hasImportMsg: !!s.importMsg, importTone: s.importMsg ? s.importMsg.tone : 'info', importTitle: s.importMsg ? s.importMsg.title : '', importText: s.importMsg ? s.importMsg.text : ''
+    };
+    const scr = Component.SCREENS.find((x) => x[0] === s.screen) || Component.SCREENS[0];
+
+    return Object.assign({
+      rootRef: this.rootRef, rootH: forced ? '100%' : '100vh',
+      isDesktop: !isMobile, isMobile,
+      isTodayScreen: s.screen === 'today', isLogScreen: s.screen === 'log', isProgressScreen: s.screen === 'progress', isReviewScreen: s.screen === 'review', isSettingsScreen: s.screen === 'settings', isOtherScreen: ['today', 'log', 'progress', 'review', 'settings'].indexOf(s.screen) < 0,
+      sideNav: Component.SCREENS.map(([k, label, icon, ai]) => ({ key: k, label, icon: k === s.screen ? ai : icon, active: k === s.screen, inactive: k !== s.screen, onClick: () => this.go(k) })),
+      navItems: Component.SCREENS.slice(0, 4).map(([k, label, icon, ai]) => ({ value: k, label: k === 'review' ? '점검' : label, icon, activeIcon: ai })),
+      screen: s.screen, onNav: (k) => this.go(k), openSettings: () => this.go('settings'), goToday: () => this.go('today'),
+      screenTitle: scr[1], screenIcon: scr[2],
+      isDemo: !!this.scenario(),
+      dateLabel: this.dayName(today), wdName: Component.WD[dt.getDay()] + '요일',
+      stageLabel: stage + '단계 · ' + st.name,
+      streakLabel: streak > 0 ? '연속 ' + streak + '일' : '오늘 첫 기록을 남겨 보세요',
+      todayOfTarget: T.minutes + ' / ' + T.target + '분',
+      cumLabel: (cumMin / 60).toFixed(1) + ' / ' + st.cumulativeHoursTarget + '시간',
+      cumPct: Math.min(100, (cumMin / 60 / st.cumulativeHoursTarget) * 100).toFixed(1) + '%',
+      modeItems: P.modes.map((m) => ({ value: m.id, label: m.id === 'min' ? m.name + ' ' + m.totalMinutes + '분' : m.name })),
+      mode: T.mode.id, onMode: (id) => this.setMode(id),
+      modeDesc: isSunday ? '' : T.mode.description, hasModeDesc: !isSunday,
+      hasRhythm: !!rhythm, rhythmText: rhythm || '',
+      tips: tips.map((t, i) => ({ n: i + 1, text: t })), tipPeek: s.tipsOpen ? '' : tips[0],
+      tipsOpen: s.tipsOpen, tipsChevron: s.tipsOpen ? 'chevron-up' : 'chevron-down', toggleTips: () => this.setState({ tipsOpen: !this.state.tipsOpen }),
+      cards: T.cards, allDone,
+      doneSummary: T.minutes + '분 공부했어요 · 연속 ' + streak + '일째',
+      hasMissing: missing > 0, missingTitle: '분이 비어 있는 기록 ' + missing + '건', onFixMissing: () => this.fixMissing(),
+      showReflection, mShowRefl: isMobile && showReflection,
+      learned: T.refl.learned || '', difficult: T.refl.difficult || '',
+      onLearned: (ev) => this.setRefl(today, 'learned', ev.target.value), onDifficult: (ev) => this.setRefl(today, 'difficult', ev.target.value),
+      hasUndo: !!s.undo, undoText: s.undo ? s.undo.text : '', onUndo: () => this.undo(),
+
+      weekLabel: this.fmt(rangeSum(wkStart, wkEnd)), weekDaysCount: rangeDays(wkStart, wkEnd),
+      monthLabel: this.fmt(rangeSum(mStart, mEnd)), monthDaysCount: rangeDays(mStart, mEnd),
+      rowLabels: '월화수목금토일'.split('').map((label) => ({ label })),
+      grid, gridRange: ym(winStart) + ' – ' + ym(winEnd),
+      gridNoPrev: winStart <= sMon, gridNoNext: s.gridPage === 0,
+      onGridPrev: () => this.setState({ gridPage: this.state.gridPage + 1 }), onGridNext: () => this.setState({ gridPage: Math.max(0, this.state.gridPage - 1) }),
+      heatLegend: Component.HEAT.map((bg, i) => ({ bg, label: Component.HEAT_LABELS[i] })),
+      calTitle: cp.getFullYear() + '년 ' + (cp.getMonth() + 1) + '월', calCells,
+      calNoPrev: calMonth <= startISO.slice(0, 7), calNoNext: calMonth >= today.slice(0, 7),
+      onCalPrev: () => this.setState({ calMonth: this.shiftMonth(calMonth, -1) }), onCalNext: () => this.setState({ calMonth: this.shiftMonth(calMonth, 1) }),
+      detTitle: this.dayName(sel), detMeta: (sel === today ? '오늘 · ' : '') + R.stage + '단계 · ' + R.mode.name,
+      detTotal: this.fmt(R.minutes), detDone: rBase.filter((c) => c.checked).length + ' / ' + rBase.length + ' 완료',
+      detFuture, detBefore, detActive, detNoEntries: detActive && R.entries.length === 0, detCards: R.cards,
+      detShowRefl: detActive && (R.entries.length > 0 || detHasRefl),
+      detReflView: !reflEditing, detReflEdit: reflEditing, detHasRefl, detNoRefl: !detHasRefl,
+      reflEditLabel: detHasRefl ? '고치기' : '남기기',
+      detLearned: R.refl.learned || '', detDifficult: R.refl.difficult || '',
+      detLearnedText: R.refl.learned || '—', detDifficultText: R.refl.difficult || '—',
+      onEditRefl: () => this.setState({ editRefl: sel }), onDoneRefl: () => this.setState({ editRefl: null }),
+      onDetLearned: (ev) => this.setRefl(sel, 'learned', ev.target.value), onDetDifficult: (ev) => this.setRefl(sel, 'difficult', ev.target.value),
+      ratioItems: [{ value: 'week', label: '이번 주' }, { value: 'month', label: '이번 달' }, { value: 'all', label: '전체' }],
+      ratio: s.ratio, onRatio: (v) => this.setState({ ratio: v }),
+      hasRatio: tot > 0, noRatio: tot === 0, ratioTotal: '총 ' + this.fmt(tot),
+      ratioSegs: ratioRows.filter((r) => r.flex > 0), ratioRows,
+      ratioEmpty: missing > 0 ? '이 기간에 기록된 시간이 아직 없어요. 비어 있는 분을 채우면 여기에 나타나요.' : '이 기간에 기록된 시간이 아직 없어요.'
+    }, prog, rev, setv);
+  }
+}
+</script>
+</body>
+</html>

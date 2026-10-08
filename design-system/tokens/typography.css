@@ -1,0 +1,64 @@
+/* ==========================================================================
+   Wanted Design System — Typography scale
+   The Wanted type ramp: Display ▸ Title ▸ Heading ▸ Headline ▸ Body ▸ Label ▸ Caption.
+   Each step has a px size, weight, line-height and letter-spacing extracted from
+   the source file. Use the CSS custom properties for ad-hoc styling, or the
+   utility classes (.wt-*) which set font / size / weight / line-height / tracking.
+   ========================================================================== */
+
+:root {
+  /* size · line-height · letter-spacing per step --------------------------- */
+  --display1-size: 56px; /* @kind font */   --display1-line: 1.286; /* @kind font */  --display1-tracking: -0.032em; /* @kind font */  --display1-weight: 700; /* @kind font */
+  --display2-size: 40px; /* @kind font */   --display2-line: 1.300; /* @kind font */  --display2-tracking: -0.027em; /* @kind font */  --display2-weight: 700; /* @kind font */
+
+  --title1-size: 36px; /* @kind font */     --title1-line: 1.334; /* @kind font */    --title1-tracking: -0.027em; /* @kind font */    --title1-weight: 700; /* @kind font */
+  --title2-size: 28px; /* @kind font */     --title2-line: 1.357; /* @kind font */    --title2-tracking: -0.012em; /* @kind font */    --title2-weight: 700; /* @kind font */
+  --title3-size: 24px; /* @kind font */     --title3-line: 1.334; /* @kind font */    --title3-tracking: -0.012em; /* @kind font */    --title3-weight: 700; /* @kind font */
+
+  --heading1-size: 22px; /* @kind font */   --heading1-line: 1.364; /* @kind font */  --heading1-tracking: -0.011em; /* @kind font */  --heading1-weight: 700; /* @kind font */
+  --heading2-size: 20px; /* @kind font */   --heading2-line: 1.400; /* @kind font */  --heading2-tracking: -0.010em; /* @kind font */  --heading2-weight: 700; /* @kind font */
+
+  --headline1-size: 18px; /* @kind font */  --headline1-line: 1.444; /* @kind font */ --headline1-tracking: -0.002em; /* @kind font */ --headline1-weight: 600; /* @kind font */
+  --headline2-size: 17px; /* @kind font */  --headline2-line: 1.412; /* @kind font */ --headline2-tracking:  0em; /* @kind font */     --headline2-weight: 600; /* @kind font */
+
+  --body1-size: 16px; /* @kind font */      --body1-line: 1.500; /* @kind font */     --body1-tracking: 0.0057em; /* @kind font */     --body1-weight: 400; /* @kind font */
+  --body1-reading-line: 1.625; /* @kind font */
+  --body2-size: 15px; /* @kind font */      --body2-line: 1.467; /* @kind font */     --body2-tracking: 0.0096em; /* @kind font */     --body2-weight: 400; /* @kind font */
+  --body2-reading-line: 1.600; /* @kind font */
+
+  --label1-size: 14px; /* @kind font */     --label1-line: 1.429; /* @kind font */    --label1-tracking: 0.0145em; /* @kind font */    --label1-weight: 600; /* @kind font */
+  --label2-size: 13px; /* @kind font */     --label2-line: 1.385; /* @kind font */    --label2-tracking: 0.0194em; /* @kind font */    --label2-weight: 600; /* @kind font */
+
+  --caption1-size: 12px; /* @kind font */   --caption1-line: 1.334; /* @kind font */  --caption1-tracking: 0.0252em; /* @kind font */  --caption1-weight: 500; /* @kind font */
+  --caption2-size: 11px; /* @kind font */   --caption2-line: 1.273; /* @kind font */  --caption2-tracking: 0.0311em; /* @kind font */  --caption2-weight: 600; /* @kind font */
+}
+
+/* Utility classes ---------------------------------------------------------- */
+.wt-display1, .wt-display2,
+.wt-title1, .wt-title2, .wt-title3,
+.wt-heading1, .wt-heading2,
+.wt-headline1, .wt-headline2,
+.wt-body1, .wt-body1-reading, .wt-body2, .wt-body2-reading,
+.wt-label1, .wt-label2,
+.wt-caption1, .wt-caption2 {
+  font-family: var(--font-sans);
+  margin: 0;
+}
+
+.wt-display1 { font-size: var(--display1-size); line-height: var(--display1-line); letter-spacing: var(--display1-tracking); font-weight: var(--display1-weight); }
+.wt-display2 { font-size: var(--display2-size); line-height: var(--display2-line); letter-spacing: var(--display2-tracking); font-weight: var(--display2-weight); }
+.wt-title1 { font-size: var(--title1-size); line-height: var(--title1-line); letter-spacing: var(--title1-tracking); font-weight: var(--title1-weight); }
+.wt-title2 { font-size: var(--title2-size); line-height: var(--title2-line); letter-spacing: var(--title2-tracking); font-weight: var(--title2-weight); }
+.wt-title3 { font-size: var(--title3-size); line-height: var(--title3-line); letter-spacing: var(--title3-tracking); font-weight: var(--title3-weight); }
+.wt-heading1 { font-size: var(--heading1-size); line-height: var(--heading1-line); letter-spacing: var(--heading1-tracking); font-weight: var(--heading1-weight); }
+.wt-heading2 { font-size: var(--heading2-size); line-height: var(--heading2-line); letter-spacing: var(--heading2-tracking); font-weight: var(--heading2-weight); }
+.wt-headline1 { font-size: var(--headline1-size); line-height: var(--headline1-line); letter-spacing: var(--headline1-tracking); font-weight: var(--headline1-weight); }
+.wt-headline2 { font-size: var(--headline2-size); line-height: var(--headline2-line); letter-spacing: var(--headline2-tracking); font-weight: var(--headline2-weight); }
+.wt-body1 { font-size: var(--body1-size); line-height: var(--body1-line); letter-spacing: var(--body1-tracking); font-weight: var(--body1-weight); }
+.wt-body1-reading { font-size: var(--body1-size); line-height: var(--body1-reading-line); letter-spacing: var(--body1-tracking); font-weight: var(--body1-weight); }
+.wt-body2 { font-size: var(--body2-size); line-height: var(--body2-line); letter-spacing: var(--body2-tracking); font-weight: var(--body2-weight); }
+.wt-body2-reading { font-size: var(--body2-size); line-height: var(--body2-reading-line); letter-spacing: var(--body2-tracking); font-weight: var(--body2-weight); }
+.wt-label1 { font-size: var(--label1-size); line-height: var(--label1-line); letter-spacing: var(--label1-tracking); font-weight: var(--label1-weight); }
+.wt-label2 { font-size: var(--label2-size); line-height: var(--label2-line); letter-spacing: var(--label2-tracking); font-weight: var(--label2-weight); }
+.wt-caption1 { font-size: var(--caption1-size); line-height: var(--caption1-line); letter-spacing: var(--caption1-tracking); font-weight: var(--caption1-weight); }
+.wt-caption2 { font-size: var(--caption2-size); line-height: var(--caption2-line); letter-spacing: var(--caption2-tracking); font-weight: var(--caption2-weight); }

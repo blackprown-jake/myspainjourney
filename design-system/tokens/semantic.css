@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Wanted Design System — Semantic aliases
+   Ergonomic role names that map onto the raw Figma Variable tokens in
+   fig-tokens.css. Components reference these (--wt-*) so themes / dark mode
+   flow through automatically (fig-tokens.css redefines the underlying tokens
+   under [data-theme="dark"]).
+   ========================================================================== */
+
+:root {
+  /* Brand / primary ------------------------------------------------------- */
+  --wt-primary: var(--blue-50);                 /* Wanted blue #0066FF */
+  --wt-primary-strong: var(--blue-45);          /* hover/strong #005EEB */
+  --wt-primary-heavy: var(--blue-40);           /* pressed/heavy */
+  --wt-primary-bg: var(--blue-95);              /* tinted primary surface */
+
+  /* Text / label ---------------------------------------------------------- */
+  --wt-text: var(--label-normal);               /* default body text */
+  --wt-text-strong: var(--label-strong);        /* pure black/white emphasis */
+  --wt-text-neutral: var(--label-neutral);
+  --wt-text-alt: var(--label-alternative);      /* secondary text */
+  --wt-text-assistive: var(--label-assistive);  /* tertiary / hints */
+  --wt-text-disabled: var(--label-disable);
+
+  /* Surfaces -------------------------------------------------------------- */
+  --wt-bg: var(--background-normal-normal);          /* page background */
+  --wt-bg-alt: var(--background-normal-alternative); /* subtle alt surface */
+  --wt-bg-elevated: var(--background-elevated-normal); /* cards, sheets */
+
+  /* Lines / fills --------------------------------------------------------- */
+  --wt-border: var(--line-normal-normal);        /* default hairline */
+  --wt-border-neutral: var(--line-normal-neutral);
+  --wt-border-alt: var(--line-normal-alternative);
+  --wt-border-solid: var(--line-solid-normal);
+  --wt-fill: var(--fill-normal);                 /* translucent grey fill */
+  --wt-fill-strong: var(--fill-strong);
+  --wt-fill-alt: var(--fill-alternative);
+
+  /* Status ---------------------------------------------------------------- */
+  --wt-positive: var(--status-positive);         /* green 0,191,64 */
+  --wt-negative: var(--status-negative);         /* red 255,66,66 */
+  --wt-cautionary: var(--status-cautionary);     /* orange */
+
+  /* Static / inverse ------------------------------------------------------ */
+  --wt-static-white: var(--static-white);
+  --wt-static-black: var(--static-black);
+  --wt-on-primary: var(--static-white);
+  --wt-inverse-bg: var(--inverse-background);
+  --wt-inverse-text: var(--inverse-label);
+
+  /* Accents (foreground + tinted background pairs) ------------------------ */
+  --wt-accent-violet: var(--accent-foreground-violet);
+  --wt-accent-violet-bg: var(--accent-background-violet);
+  --wt-accent-cyan: var(--accent-foreground-cyan);
+  --wt-accent-cyan-bg: var(--accent-background-cyan);
+  --wt-accent-pink: var(--accent-foreground-pink);
+  --wt-accent-pink-bg: var(--accent-background-pink);
+  --wt-accent-red: var(--accent-foreground-red);
+  --wt-accent-green: var(--accent-foreground-green);
+  --wt-accent-orange: var(--accent-foreground-orange);
+}

@@ -1,0 +1,239 @@
+{
+  "meta": {
+    "title": "Jake의 스페인어 로드맵 — 스페인 북부 이민",
+    "goal": "약 2년 안에 B2 도달, 스페인 북부에서 생활·행정·업무 처리",
+    "accent": "스페인 본토식(vosotros 사용, z와 ce·ci를 θ로 발음)",
+    "dailyTime": "책상 앞 하루 1~2시간, 평균 1.5시간",
+    "learnerNotes": "스페인어 완전 초보, 영어 상급(설명과 번역은 영어로 받는 게 유리)",
+    "startDate": "2026-10-06",
+    "principle": "다음 단계로 넘어갈지는 날짜가 아니라 넘어가는 기준을 채웠는지로 정함"
+  },
+  "blocks": [
+    { "id": "vocab", "name": "단어" },
+    { "id": "input", "name": "대량 입력" },
+    { "id": "structure", "name": "구조 또는 집중 듣기" },
+    { "id": "output", "name": "말하기·쓰기" }
+  ],
+  "modes": [
+    {
+      "id": "min",
+      "name": "최소판",
+      "totalMinutes": 15,
+      "description": "Anki 복습 + 쉬운 영상 1개. 기록이 끊기지 않게 하는 게 목적",
+      "blockMinutes": { "vocab": 8, "input": 7, "structure": 0, "output": 0 }
+    },
+    {
+      "id": "1h",
+      "name": "1시간판",
+      "totalMinutes": 60,
+      "description": "평일 기본",
+      "blockMinutes": { "vocab": 15, "input": 30, "structure": 15, "output": 0 }
+    },
+    {
+      "id": "2h",
+      "name": "2시간판",
+      "totalMinutes": 120,
+      "description": "여유 있는 날",
+      "blockMinutes": { "vocab": 20, "input": 60, "structure": 25, "output": 15 }
+    }
+  ],
+  "stages": [
+    {
+      "id": 0,
+      "name": "준비",
+      "period": "1~2주",
+      "cumulativeHoursTarget": 15,
+      "focus": "발음·강세 규칙, 도구 설치, Language Transfer 시작",
+      "tasks": {
+        "vocab": {
+          "task": "Anki 새 카드 10장(발음 덱 → 기초 50단어)",
+          "resources": ["Learn to read Spanish 🇪🇸 - The Spanish writing system", "Spanish Frequency Core Vocabulary 1–50"]
+        },
+        "input": {
+          "task": "초보 영상 보기. 그림과 몸짓으로 대충 따라가기만 해도 충분",
+          "resources": ["Dreaming Spanish Superbeginner(억양 필터: 스페인)"]
+        },
+        "structure": {
+          "task": "Language Transfer 1~2강. 문제가 나오면 멈추고 소리 내서 답하기",
+          "resources": ["Language Transfer Complete Spanish"]
+        },
+        "output": {
+          "task": "발음 덱 예시 단어를 듣고 소리 내 따라 말하기",
+          "resources": ["Learn to read Spanish 🇪🇸 - The Spanish writing system"]
+        }
+      },
+      "gate": "처음 보는 단어를 강세까지 맞게 소리 내 읽을 수 있음"
+    },
+    {
+      "id": 1,
+      "name": "기초",
+      "period": "1~3개월",
+      "cumulativeHoursTarget": 135,
+      "focus": "Language Transfer 완주, 초보 영상, 고빈도 단어 1,000개",
+      "tasks": {
+        "vocab": {
+          "task": "Anki 복습 + 새 카드 10~15장",
+          "resources": ["Basic European Spanish Sentences", "Spanish Top 5000 Vocabulary(처음 1,000단어)"]
+        },
+        "input": {
+          "task": "초보 영상, 스페인 출신 가이드 위주",
+          "resources": ["Dreaming Spanish Superbeginner → Beginner"]
+        },
+        "structure": {
+          "task": "Language Transfer 1강(약 90강 완주 목표)",
+          "resources": ["Language Transfer Complete Spanish"]
+        },
+        "output": {
+          "task": "초보 영상 문장 5~10분 듣고 따라 말하기",
+          "resources": ["Dreaming Spanish"]
+        }
+      },
+      "gate": "Dreaming Spanish Beginner 영상을 자막 없이 대부분 따라감"
+    },
+    {
+      "id": 2,
+      "name": "이해 확장",
+      "period": "4~8개월",
+      "cumulativeHoursTarget": 360,
+      "focus": "중급 입력, 집중 듣기 시작, 문장 채굴, 튜터 시작",
+      "tasks": {
+        "vocab": {
+          "task": "Anki 복습 + 문장 채굴(모르는 단어가 1~2개인 문장 저장)",
+          "resources": ["Anki", "Language Reactor"]
+        },
+        "input": {
+          "task": "중급 영상·학습자용 팟캐스트·쉬운 읽기책",
+          "resources": ["Dreaming Spanish Intermediate", "Hoy Hablamos Básico", "등급별 읽기책"]
+        },
+        "structure": {
+          "task": "구조 학습(요일 규칙에 따라 집중 듣기로 바뀜)",
+          "resources": ["AI 챗봇(스크립트 구문 분석, 설명은 영어로)"]
+        },
+        "output": {
+          "task": "짧은 일기 쓰기(주 3회), 튜터나 AI로 첨삭",
+          "resources": ["튜터(italki, Preply 등)", "AI 챗봇"]
+        }
+      },
+      "gate": "DELE A2 모의고사 합격선 · 학습자용 팟캐스트 대부분 이해"
+    },
+    {
+      "id": 3,
+      "name": "실제 콘텐츠",
+      "period": "9~15개월",
+      "cumulativeHoursTarget": 675,
+      "focus": "요리·여행·영화 원어민 콘텐츠, 현지 브이로그 집중 듣기, 튜터 주 2회",
+      "tasks": {
+        "vocab": {
+          "task": "Anki 복습 + 문장 채굴",
+          "resources": ["Anki", "Language Reactor"]
+        },
+        "input": {
+          "task": "요리·여행·영화 원어민 콘텐츠, 일반 학습자용 팟캐스트",
+          "resources": ["Cocina abierta de Karlos Arguiñano", "Un país para comérselo", "스페인 영화·드라마(스페인어 자막)", "Hoy Hablamos", "Unlimited Spanish"]
+        },
+        "structure": {
+          "task": "현지인 브이로그 도입부 1~2분 집중 듣기",
+          "resources": ["스페인 북부 여행 브이로그"]
+        },
+        "output": {
+          "task": "튜터 수업(주 2회), 주제를 정해 토론",
+          "resources": ["튜터(italki, Preply 등)"]
+        }
+      },
+      "gate": "DELE B1 모의고사 합격선 · 스페인어 자막으로 영화 줄거리를 따라감"
+    },
+    {
+      "id": 4,
+      "name": "이민 준비",
+      "period": "16~24개월",
+      "cumulativeHoursTarget": 1080,
+      "focus": "생활·행정 스페인어, 뉴스·라디오, 역할극",
+      "tasks": {
+        "vocab": {
+          "task": "Anki 복습 + 생활·행정 어휘(거주 등록, 집 계약, 은행, 병원, 일)",
+          "resources": ["Anki"]
+        },
+        "input": {
+          "task": "스페인 뉴스·라디오, 정착할 지역 방송",
+          "resources": ["스페인 뉴스·라디오"]
+        },
+        "structure": {
+          "task": "생활·행정 상황 표현 집중 학습",
+          "resources": ["AI 챗봇"]
+        },
+        "output": {
+          "task": "튜터와 역할극: 관공서, 집 계약, 병원, 은행, 전화 통화",
+          "resources": ["튜터(italki, Preply 등)"]
+        }
+      },
+      "gate": "자막 없이 일상 대화와 전화 처리 · DELE B2 응시"
+    }
+  ],
+  "weeklyRhythm": [
+    {
+      "days": ["월", "수", "금"],
+      "activity": "집중 듣기 세션: 1~2분 구간 받아쓰기 → 스크립트 비교 → 따라 말하기",
+      "replacesBlock": "structure",
+      "fromStage": 2,
+      "noteBeforeStage": "0~1단계에서는 Language Transfer를 그대로 진행"
+    },
+    {
+      "days": ["화", "목"],
+      "activity": "대량 입력 비중 확대, 구조 학습",
+      "fromStage": 0
+    },
+    {
+      "days": ["토"],
+      "activity": "튜터 수업 30~60분, 주간 일기",
+      "fromStage": 2,
+      "note": "3단계부터 튜터는 주 2회(요일 자유)"
+    },
+    {
+      "days": ["일"],
+      "activity": "즐기기용 영상이나 영화 1편, 주간 점검 10분",
+      "fromStage": 0
+    }
+  ],
+  "dailyOrderTips": [
+    "Anki 복습(초록 카드)부터 처리하고 새 카드로 넘어가기",
+    "Anki 빨간 카드는 0이 될 때까지. 바쁘면 다음 날로 넘어가도 괜찮음",
+    "Language Transfer는 문제가 나오면 멈추고 소리 내서 답하기",
+    "0분인 날만 만들지 않기. 최소판 15분도 공부한 날"
+  ],
+  "exams": [
+    { "name": "DELE A2", "targetStage": 2, "target": "2단계 끝(약 8개월 차)", "note": "스페인 국적 취득 요건(CCSE와 함께). 자격은 만료되지 않음" },
+    { "name": "DELE B1", "targetStage": 3, "target": "3단계 끝(약 15개월 차)" },
+    { "name": "DELE B2", "targetStage": 4, "target": "4단계(약 24개월 차)", "note": "직장·행정 대응 수준" }
+  ],
+  "monthlyReview": {
+    "checklist": [
+      "이번 달 누적 시간과 단계별 목표 시간 비교",
+      "지난달에 본 Dreaming Spanish 영상 하나를 다시 보고 이해도 비교",
+      "1분 자기소개를 녹음해 지난달 녹음과 비교",
+      "현재 단계의 넘어가는 기준 확인"
+    ]
+  },
+  "adjustmentRules": [
+    { "signal": "자료가 절반도 이해되지 않음", "adjustment": "한 단계 쉬운 자료로 내림" },
+    { "signal": "자료가 거의 다 이해되고 지루함", "adjustment": "한 단계 어려운 자료를 섞음" },
+    { "signal": "Anki 복습이 30분을 넘김", "adjustment": "새 단어 수를 하루 5개로 줄임" },
+    { "signal": "2주 연속 최소판만 함", "adjustment": "공부 시간대를 바꾸거나 1시간판을 45분으로 줄임" },
+    { "signal": "말할 때 단어가 안 떠오름", "adjustment": "혼잣말·튜터 비중을 늘림" }
+  ],
+  "resources": [
+    { "name": "Language Transfer Complete Spanish", "category": "구조", "stages": [0, 1], "url": "https://www.languagetransfer.org/complete-spanish", "cost": "무료", "howTo": "영어를 발판으로 문장 구조를 추론하는 오디오 강좌. 문제가 나오면 멈추고 소리 내서 답하기" },
+    { "name": "Learn to read Spanish 🇪🇸 - The Spanish writing system", "category": "발음", "stages": [0], "url": "https://ankiweb.net/shared/info/1195472731", "cost": "무료", "howTo": "Anki 발음 덱. 소리를 듣고 소리 내 따라 하기" },
+    { "name": "Spanish Frequency Core Vocabulary 1–50", "category": "단어", "stages": [0], "url": "https://ankiweb.net/shared/info/2080826841", "cost": "무료", "howTo": "가장 자주 쓰는 50단어 Anki 덱" },
+    { "name": "Basic European Spanish Sentences", "category": "단어", "stages": [1], "url": "https://ankiweb.net/shared/info/1711857842", "cost": "무료", "howTo": "스페인식 기초 문장 Anki 덱" },
+    { "name": "Spanish Top 5000 Vocabulary", "category": "단어", "stages": [1], "url": "https://ankiweb.net/shared/decks?search=Spanish%20Top%205000%20Vocabulary", "cost": "무료", "howTo": "처음 1,000단어까지. 이상한 이미지 카드는 정지" },
+    { "name": "Anki", "category": "도구", "stages": [0, 1, 2, 3, 4], "url": "https://apps.ankiweb.net/", "cost": "PC·안드로이드 무료, iOS 유료", "howTo": "앞면 스페인어, 뒷면 영어. 하루 새 카드 10~15장" },
+    { "name": "Dreaming Spanish", "category": "입력", "stages": [0, 1, 2], "url": "https://www.dreamingspanish.com", "cost": "무료 영상 + 유료 플랜", "howTo": "억양 필터를 스페인으로. 시청 시간 자동 기록" },
+    { "name": "Language Reactor", "category": "도구", "stages": [1, 2, 3, 4], "url": "https://www.languagereactor.com", "cost": "기본 무료", "howTo": "유튜브·넷플릭스 이중자막, 두 번째 줄은 영어" },
+    { "name": "Hoy Hablamos Básico", "category": "입력", "stages": [2], "url": "https://www.hoyhablamos.com", "cost": "무료, 스크립트 유료", "howTo": "A2 대상 스페인 팟캐스트" },
+    { "name": "Hoy Hablamos", "category": "입력", "stages": [3], "url": "https://www.hoyhablamos.com", "cost": "무료, 스크립트 유료", "howTo": "평일 매일 새 에피소드" },
+    { "name": "Unlimited Spanish (Óscar)", "category": "입력·말하기", "stages": [3], "url": "", "cost": "무료", "howTo": "스페인 화자, 후반부 질문-답 유창성 연습" },
+    { "name": "Cocina abierta de Karlos Arguiñano", "category": "요리", "stages": [3], "url": "", "cost": "방송·클립", "howTo": "레시피 단위로 짧아 집중 듣기에 적합" },
+    { "name": "Un país para comérselo", "category": "여행·요리", "stages": [3, 4], "url": "", "cost": "RTVE 다시보기, 해외 시청 제한 확인 필요", "howTo": "스페인 지역을 돌며 음식을 다루는 여행 다큐" },
+    { "name": "튜터(italki, Preply 등)", "category": "말하기", "stages": [2, 3, 4], "url": "", "cost": "유료", "howTo": "스페인 출신, 가능하면 북부 출신" }
+  ]
+}
