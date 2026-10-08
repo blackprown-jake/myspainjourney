@@ -8,6 +8,7 @@ Jake의 스페인어 로드맵(스페인 북부 이민, 약 2년 안에 B2)을 �
 - 할 일·자료·기준·문구는 모두 `data/spanish-plan.json`에서 읽는다. 계획 내용을 코드에 새로 쓰지 않는다.
 - 첫 실행은 `data/sample-log.json`의 기록(2026-10-06)으로 시작한다.
 - 서버는 없다. 기록은 브라우저 localStorage에 저장하고, JSON으로 내보내고 가져온다.
+- 기기 간 동기화는 사용자의 GitHub 비공개 gist를 저장소로 쓴다. 브라우저에서 GitHub API를 직접 호출하고, 기기마다 gist 권한 토큰을 한 번 입력한다.
 
 ## 이 패키지에 대해
 
@@ -55,9 +56,11 @@ npx serve .          # 또는: python3 -m http.server
 - **계획 데이터:** `spanish-plan.json`을 빌드할 때 import하고 TypeScript 타입을 정의한다.
 - **상태:** 저장 데이터 하나(`CaminoData`)를 관리하는 훅이나 스토어를 만든다. 바뀔 때마다 localStorage에 쓰고, `storage` 이벤트로 탭 사이를 동기화한다.
 - **순수 로직:** 카드 생성, 요일 규칙, 연속일, 잔디 단계, 가져오기 병합은 UI와 분리한다. 아래 '검증 예시'를 단위 테스트로 쓴다.
+- **동기화:** GitHub Gist 연동과 병합은 `src/lib/sync.ts`로 분리한다(아래 '기기 간 동기화').
 - **로직 원본:** `reference/Camino.dc.html` 하단의 `class Component`에 있다. 주요 메서드:
   - 카드·안내: `cardsFor`, `rhythm`, `resInfo`, `buildDay`
   - 데이터: `importFile`, `exportData`, `fixMissing`, `makeDemo`
+  - 동기화: `runSync`, `merge`, `stamp`, `readGist`, `findGist`, `connect`, `disconnect`
   - 파생 값 계산: `renderVals`
 
 ## 데이터
@@ -91,6 +94,7 @@ interface CaminoData {
   logs: DayLog[];                                // 날짜 오름차순
   gates: Record<string, boolean[]>;              // 단계 id → 넘어가는 기준 체크 상태(기준을 ' · '로 나눈 순서)
   monthly: Record<string, { checks: boolean[]; memo: string; signals: boolean[] }>; // 키: YYYY-MM
+  updated?: Record<string, number>;              // 단위별 마지막 수정 시각(ms). 키: settings · gates · log:YYYY-MM-DD · monthly:YYYY-MM
 }
 
 interface DayLog {
@@ -108,6 +112,7 @@ interface DayLog {
   - `logs`: sample-log.json의 `logs`
   - `gates`, `monthly`: 빈 객체 `{}`
 - 날짜는 모두 로컬 시간 기준 `YYYY-MM-DD`이고, 한 주는 월요일부터 센다.
+- `updated`는 동기화 병합에 쓴다. 로컬에서 저장할 때마다 이전 데이터와 단위별로 비교해, 바뀜 단위만 지금 시각으로 찍는다. 동기화 결과를 적용할 때는 찍지 않는다. 값이 없으면 0으로 본다.
 
 ### 내보내기·가져오기
 
@@ -116,6 +121,90 @@ interface DayLog {
 - **`settings` 객체가 있는 파일(내보낸 파일):** 전체를 교체한다. `settings`는 기존 값 위에 덮어쓰고, `logs`·`gates`·`monthly`는 파일 내용으로 바꾼다.
 - **`logs`만 있는 파일(sample-log.json 형식):** 날짜 기준으로 기존 기록에 합친다. 같은 날짜는 가져온 기록으로 바꾼다.
 - 가져온 뒤에는 `reflection` 기본값을 채우고 날짜순으로 정렬한다. 6초 동안 되돌릴 수 있다.
+
+## 기기 간 동기화 (GitHub Gist)
+
+서버 없이 사용자의 GitHub 비공개(secret) gist 하나를 저장소로 쓴다. 브라우저에서 GitHub REST API를 직접 호출한다.
+
+### 연결 정보
+
+- 기기마다 한 번, `gist` 권한만 있는 classic 토큰을 붙여 넣는다. 토큰 만들기 링크: `https://github.com/settings/tokens/new?scopes=gist&description=Camino`
+- 기기별 연결 정보는 localStorage `camino.sync.v1`에 둔다. 기록(`camino.v1`)과 분리하고, 내보내기 파일이나 gist 내용에 넣지 않는다.
+
+  ```ts
+  interface SyncConfig {
+    token?: string;          // 없으면 동기화 꺼짐
+    login?: string;          // GitHub 계정
+    gistId?: string | null;
+    status?: 'syncing' | 'ok' | 'offline' | 'auth' | 'scope' | 'error';
+    error?: string | null;
+    lastSyncAt?: number;     // ms
+    everSynced?: boolean;    // 이 기기에서 한 번이라도 동기화했는지
+    lastMerged?: number;     // 마지막 동기화에서 원격에서 가져온 날 수
+  }
+  ```
+
+- gist는 설명 "Camino 스페인어 학습 기록", 비공개(`public: false`), 파일 `camino-data.json` 하나다. 내용은 `CaminoData` 전체(JSON, 2칸 들여쓰기)다.
+- 연결 정보가 바뀌면 같은 페이지의 다른 컴포넌트와 다른 탭도 상태를 다시 읽는다(커스텀 이벤트 + `storage` 이벤트).
+
+### API
+
+모든 요청에 `Authorization: Bearer {token}`, `Accept: application/vnd.github+json`, `cache: 'no-store'`를 쓴다. `no-store`가 없으면 GitHub API 응답이 브라우저에 60초간 캐시되어, 다른 기기가 방금 올린 내용을 못 볼 수 있다.
+
+| 용도 | 요청 |
+| --- | --- |
+| 토큰 확인 | `GET /user` → `login` |
+| gist 찾기 | `GET /gists?per_page=100&page=N`에서 `files['camino-data.json']`이 있는 첫 gist(최대 10쪽) |
+| 읽기 | `GET /gists/{id}` → `files['camino-data.json'].content`. `truncated`면 `raw_url`을 받아 온다 |
+| 만들기 | `POST /gists` `{ description, public: false, files: { 'camino-data.json': { content } } }` |
+| 쓰기 | `PATCH /gists/{id}` `{ files: { 'camino-data.json': { content } } }` |
+
+### 동기화 한 번 — `runSync()`
+
+1. 토큰이 없으면 끝낸다. 이미 실행 중이면, 끝난 뒤 한 번 더 실행하도록 표시만 한다.
+2. 상태를 `syncing`으로 바꾼다. `login`이 없으면 `GET /user`.
+3. `gistId`가 있으면 읽는다(404면 `gistId`를 버린다). 없으면 찾는다.
+4. 원격 데이터가 있으면 `merge(local, remote, preferRemoteOnTie = !everSynced)`.
+5. 그사이 로컬 데이터가 바뀌었으면 결과를 쓰지 않고 다시 실행한다.
+6. 병합 결과가 로컬과 다르면 localStorage에 쓰고, 화면이 다시 읽게 한다. 이때 `updated`를 새로 찍지 않는다.
+7. gist가 없으면 만든다. 파일이 없거나 병합 결과가 원격과 다르면 PATCH한다.
+8. `status: 'ok'`, `lastSyncAt`, `everSynced: true`, `lastMerged`를 저장한다.
+
+**실행 시점**
+
+- 앱을 열 때(0.3초 뒤)
+- 창으로 돌아올 때(`focus`, `visibilitychange` → visible), 인터넷이 다시 연결될 때(`online`)
+- 로컬에서 기록을 바꾼 뒤 2초(디바운스)
+- 설정의 '지금 동기화', 오류 Alert의 '다시 시도'
+
+예약이 겹치면 전역 타이머 하나로 합친다. 예시 데이터 모드에서는 동기화하지 않는다.
+
+### 병합 규칙 — `merge(a, b, preferB)`
+
+- 병합 단위는 `settings`, `gates`, 날짜별 `DayLog`, 달별 `monthly`다. 단위마다 `updated` 시각이 더 최근인 쪽을 통째로 쓴다(필드 단위 병합은 하지 않는다).
+- 한쪽에만 있는 단위는 그대로 가져온다. 기록 날짜는 합집합이 된다.
+- 시각이 같으면(둘 다 시각 없음 등) 로컬을 쓰되, 그 기기의 첫 동기화에서는 원격을 쓴다. 동기화 이전에 다른 기기에서 쌓은 기록이 새 기기의 시드 기록에 덮이지 않게 하기 위해서다.
+- 체크 해제는 `entries`에서 빼는 것이라 날짜 단위는 남는다. 그래서 삭제 표시(tombstone)가 필요 없다.
+
+### 오류 처리
+
+| 상황 | status | 화면 |
+| --- | --- | --- |
+| 네트워크 실패이고 `navigator.onLine === false` | offline | 오프라인 안내. `online` 이벤트에 다시 시도 |
+| 네트워크 실패(온라인) | error | "GitHub에 연결하지 못했어요." + 다시 시도 |
+| 401 | auth | 토큰 다시 넣기 |
+| 403 · 404 | scope | gist 권한 확인 |
+| 그 외 | error | "HTTP {code}" + 다시 시도 |
+
+### 연결·해제
+
+- **연결:** `GET /user`로 토큰을 확인한다. 같은 계정이면 기존 `gistId`와 `everSynced`를 유지하고, 다른 계정이면 비운다. 이어서 `runSync()`를 실행하고, 성공하면 결과 Alert를 띄운다.
+- **해제:** 이 기기의 `camino.sync.v1`만 지운다. 기록과 gist는 그대로 남는다. 6초 동안 되돌릴 수 있다.
+
+### 보안
+
+- 토큰은 그 브라우저의 localStorage에만 저장된다. gist 권한만 주고 만료일을 정하도록 안내한다.
+- secret gist는 검색에 나오지 않지만, URL을 아는 사람은 볼 수 있다(암호화 아님). 학습 기록 수준의 내용만 저장한다.
 
 ## 계산 규칙
 
@@ -415,19 +504,59 @@ interface DayLog {
 1. **제목** "설정" + 부제 "학습 계획과 기록 데이터를 관리해요."
 2. **예시 데이터 알림**(예시 데이터 모드에서만): Alert info "예시 데이터를 보고 있어요" / "여기서 바꾼 내용은 저장되지 않아요."
 3. **결과 알림:** 내보내기·가져오기 결과를 Alert(positive/negative)로 보여 준다. 다른 화면으로 가면 사라진다.
-4. **학습 계획** Card(padding 24px, gap 22px)
+4. **기기 간 동기화** Card(padding 24px, gap 16px). 설정의 첫 카드다.
+   - **머리:** "기기 간 동기화"(headline2) + "GitHub 비공개 gist에 기록을 저장해 휴대폰과 PC의 기록을 자동으로 맞춰요."(label2 `--label-alternative`). 오른쪽에 상태 표시(8px 점 + label2 600):
+
+     | 상태 | 문구 | 글자 색 | 점 색 |
+     | --- | --- | --- | --- |
+     | 토큰 없음 | 꺼짐 | `--label-alternative` | `--label-assistive` |
+     | syncing | 동기화 중 | `--blue-50` | `--blue-50` |
+     | ok | 동기화됨 | `--green-30` | `--status-positive` #00BF40 |
+     | offline | 오프라인 | `--orange-30` #9C5800 | `--status-cautionary` #FF9200 |
+     | auth · scope · error | 확인 필요 | `--red-40` #E52222 | `--status-negative` #FF4242 |
+
+   - **연결 전**(auth·scope 상태에서도 이 폼을 보여 줌)
+     - 번호 단계 2개(22px 번호 원 + body2 `--label-neutral`):
+       1. "GitHub에서 gist 권한만 있는 토큰을 만들어요." + "토큰 만들기" 링크(external-link 14, 새 탭)
+       2. "만든 토큰을 붙여 넣고 연결해요. 기기마다 한 번씩 하면 돼요."
+     - TextField "GitHub 토큰"(type password, placeholder "ghp_로 시작하는 토큰", flex 1 1 200px) + Button medium. 아래 끝 정렬, 좁으면 줄바꿈.
+       - 버튼 문구: "연결", 연결 중에는 "연결 중…", 토큰이 있는데 auth·scope면 "다시 연결".
+       - 입력이 비었거나 연결 중이면 disabled.
+     - 캐션: "토큰은 이 브라우저에만 저장되고 내보내기 파일에는 들어가지 않아요."
+   - **연결됨**
+     - 2열 정보(라벨 label2 600 `--label-alternative` / 값 body2 `--label-normal`):
+       - 계정: "@{login}"
+       - 저장 위치: "비공개 gist · camino-data.json" + "열기" 링크(`https://gist.github.com/{login}/{gistId}`)
+       - 마지막 동기화: "방금 전" / "N분 전" / "오늘 HH:MM" / "M월 D일 HH:MM". 30초마다 갱신하고, 기록이 없으면 "아직 없음".
+     - 캐션: "앱을 열 때, 다른 창에서 돌아올 때, 기록을 바꾸고 2초 뒤에 자동으로 맞춰요. 같은 날을 두 기기에서 고치면 나중에 고친 쪽이 남아요."
+     - 버튼:
+       - Button outlined assistive "지금 동기화"(refresh 아이콘, 동기화 중 disabled)
+       - Button text assistive "연결 해제"(토스트 "이 기기의 동기화를 해제했어요" + 되돌리기)
+   - **카드 안 Alert:** 상태 문제(offline·auth·scope·error)를 먼저 보여 주고, 없으면 연결 결과 메시지를 보여 준다.
+
+     | 상황 | tone | 제목 | 본문 | 액션 |
+     | --- | --- | --- | --- | --- |
+     | 연결 성공 | positive | 동기화를 연결했어요 | @{login} 계정의 비공개 gist에 기록을 저장해요.(합친 날이 있으면 " 다른 기기의 기록 {n}일을 합쳤어요.") | — |
+     | 연결 실패 | negative | 연결하지 못했어요 | 401: 토큰이 맞지 않아요. 복사한 토큰 전체를 붙여 넣었는지 확인해 주세요. · 네트워크: GitHub에 연결하지 못했어요. 인터넷 연결을 확인해 주세요. · 그 외: 잠시 후 다시 시도해 주세요. (HTTP {code}) | — |
+     | offline | cautionary | 오프라인이에요 | 기록은 이 기기에 먼저 저장하고, 인터넷에 연결되면 자동으로 올려요. | — |
+     | auth | negative | 토큰을 다시 넣어 주세요 | 토큰이 만료됐거나 삭제됐어요. 새 토큰을 만들어 붙여 넣으면 이어서 동기화해요. | — |
+     | scope | negative | gist 권한이 없는 토큰이에요 | 토큰을 만들 때 gist 항목을 체크했는지 확인해 주세요. | — |
+     | error | negative | 동기화하지 못했어요 | {오류} · 잠시 후 다시 시도해 주세요. | 다시 시도 |
+
+   - **예시 데이터 모드:** 상태 "꺼짐"과 "예시 데이터에서는 동기화하지 않아요."만 보여 준다.
+5. **학습 계획** Card(padding 24px, gap 22px)
    - "학습 계획"(headline2)
    - TextField type=date "학습 시작일"(최대 240px) + 캡션 "기록 화면의 잔디가 이 날짜부터 시작해요."
    - "기본 모드"(14px 600) + SegmentedControl(medium) + 캡션 "새 날을 열 때 이 모드로 시작해요. 오늘 화면에서 고른 모드는 그날만 적용돼요."
-5. **현재 단계** Card
+6. **현재 단계** Card
    - "현재 단계" + 설명 "보통은 진도 화면에서 기준을 채우고 넘어가요. 잘못 넘어갔거나 이미 알고 있는 단계가 있을 때 여기서 바꿔요."
    - 5개 행(button role=radio, 최소 56px): Radio + "{n}단계 · {name}"(body1 600) + "{period} · 누적 {목표}시간"(label2).
    - 바꾸면 되돌리기 토스트를 띄운다.
-6. **데이터** Card(gap 16px)
+7. **데이터** Card(gap 16px)
    - "데이터" + "저장된 기록 {n}일 · 누적 {x.x}시간"(body2 `--label-neutral`)
    - 버튼: Button outlined assistive "내보내기"(download 아이콘), "가져오기"(upload 아이콘, 숨은 file input, `.json`만)
    - 안내(caption1 목록):
-     - 기록은 이 브라우저에만 저장돼요. 기기를 바꾸거나 브라우저 데이터를 지우기 전에 내보내 두세요.
+     - 동기화를 켜지 않으면 기록은 이 브라우저에만 저장돼요. 기기를 바꾸거나 브라우저 데이터를 지우기 전에 내보내 두세요.
      - 내보낸 파일을 가져오면 전체가 그 파일로 바뀌어요.
      - sample-log.json처럼 logs만 있는 파일은 기존 기록에 합쳐지고, 같은 날짜는 가져온 기록으로 바뀌어요.
    - 결과 문구(제목 / 본문):
@@ -450,6 +579,7 @@ interface DayLog {
 - 배운 것을 편집 중인 날짜
 - 월간 점검의 달
 - 설정 결과 메시지
+- 동기화: 토큰 입력값, 연결 중 여부, 연결 결과 메시지(연결 상태 자체는 `camino.sync.v1`에 저장)
 
 **그 외 규칙**
 - 화면을 옮기면 입력 패널, 배운 것 편집, 설정 메시지를 닫는다.
@@ -581,6 +711,13 @@ Props는 각 JSX 파일 상단 주석과 코드에 있다.
 - sample-log.json(logs만 있음)을 가져오면 기존 기록에 합쳐진다.
 - 내보낸 파일을 가져오면 settings·gates·monthly까지 전체가 교체된다.
 
+**동기화 병합**
+- 로컬 10/6(`updated` 100)과 원격 10/6(200) → 원격 10/6이 남는다.
+- 로컬에만 10/7, 원격에만 10/8 → 둘 다 남는다.
+- 양쪽 10/6 모두 `updated` 없음 → 그 기기의 첫 동기화면 원격, 이후에는 로컬이 남는다.
+- `monthly["2026-10"]`이 원격에서 더 최근 → 원격의 메모·체크가 남는다.
+- 동기화 결과를 적용한 뒤에는 `updated`가 바뀌지 않는다(다시 올릴 때 서로 덮어쓰지 않음).
+
 ## 알려진 제한·결정 사항
 
 **사용자가 정한 것**
@@ -592,8 +729,11 @@ Props는 각 JSX 파일 상단 주석과 코드에 있다.
 - 일요일 영상 시간: 모드 총 시간 − 10분
 - 토요일 튜터 수업: 30분
 
-**제약**
-- 기록은 브라우저마다 따로 저장되므로 휴대폰과 PC 사이에 자동 동기화가 없다. 내보내기·가져오기로 옮긴다. 동기화하려면 나중에 백엔드가 필요하다(이번 범위 밖).
+**동기화의 한계**
+- 실시간이 아니다. 앱을 열 때, 돌아올 때, 바꾸고 2초 뒤에 맞춘다.
+- 동기화 전에 같은 단위(같은 날, 같은 달 점검, 설정, 기준 체크)를 두 기기에서 각각 고치면 나중에 고친 쪽만 남는다.
+- 기기마다 토큰을 넣어야 하고, 토큰이 만료되면 다시 넣어야 한다.
+- GitHub API 한도(인증 시 시간당 5,000회)는 개인 사용에 충분하다.
 
 **프로토타입에만 있는 것**
 - 리뷰용 예시 데이터 시나리오(`makeDemo`. 2026-11-18, 11-22, 2027-02-15, 02-20)가 있다. 실제 앱에서는 생략하거나 저장하지 않는 개발용 옵션으로만 둔다.
